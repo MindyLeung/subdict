@@ -102,7 +102,7 @@ export function createPlayer({
 
   document.addEventListener("keydown", (event) => {
     const target = event.target;
-    const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+    const isTyping = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable;
     if (isTyping) return;
 
     if (event.code === "Space") {

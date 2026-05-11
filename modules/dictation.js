@@ -99,9 +99,20 @@ export function createDictation({
     input.value = "";
   });
 
+  let compositionJustEnded = false;
+
+  input.addEventListener("compositionend", () => {
+    compositionJustEnded = true;
+    // Reset after current event loop so the Enter that confirmed IME is skipped
+    // but the next real Enter is handled normally.
+    setTimeout(() => { compositionJustEnded = false; }, 0);
+  });
+
   input.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" || event.isComposing) return;
+    if (event.key !== "Enter") return;
+    if (event.isComposing || compositionJustEnded) return;
     event.preventDefault();
+    event.stopPropagation();
     addRecord(input.value);
     input.value = "";
   });
