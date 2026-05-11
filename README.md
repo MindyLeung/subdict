@@ -10,6 +10,12 @@ Subly 是一个桌面端影视听写语言学习工具。MVP 当前专注英语/
 - 听写文本导出
 - Light / Ocean Dark 主题切换
 
+## Groq 查词
+
+顶部 `API` 按钮可以填写 Groq API Key。MVP 阶段 Key 只保存在当前浏览器的 `localStorage` 中，用于直接调用 Groq Chat Completions API。
+
+没有填写 Key 时，查词面板会显示本地预览内容，方便继续测试听写和笔记流程。
+
 ## 运行
 
 这是纯静态前端项目，不需要构建步骤。用 VS Code Live Server 打开，或在项目目录运行：

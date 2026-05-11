@@ -1,3 +1,5 @@
+import { t } from "./i18n.js";
+
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5];
 
 export function createPlayer({
@@ -11,6 +13,7 @@ export function createPlayer({
   timeReadout,
   speedBtn,
   emptyVideo,
+  onVideoLoaded,
 }) {
   let speedIndex = 2;
 
@@ -35,7 +38,7 @@ export function createPlayer({
     emptyVideo.innerHTML = `
       <div class="play-mark">!</div>
       <strong>${message}</strong>
-      <span>建议先转成 MP4，或换一个浏览器测试。</span>
+      <span>${t("videoFormatHint")}</span>
     `;
   }
 
@@ -52,10 +55,19 @@ export function createPlayer({
     const file = videoInput.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
+    if (video.src?.startsWith("blob:")) {
+      URL.revokeObjectURL(video.src);
+    }
     video.src = url;
     video.load();
     fileName.textContent = file.name;
     emptyVideo.hidden = true;
+    onVideoLoaded?.({
+      id: createVideoId(file),
+      name: file.name,
+      size: file.size,
+      lastModified: file.lastModified,
+    });
     updateControls();
   });
 
@@ -66,7 +78,7 @@ export function createPlayer({
   video.addEventListener("play", updateControls);
   video.addEventListener("pause", updateControls);
   video.addEventListener("error", () => {
-    showVideoError("当前浏览器可能不支持这个视频格式");
+    showVideoError(t("videoFormatError"));
   });
 
   backBtn.addEventListener("click", () => {
@@ -111,6 +123,11 @@ export function createPlayer({
 
   return {
     getCurrentTime: () => video.currentTime || 0,
+    getVideoName: () => fileName.textContent,
     formatTime,
   };
+}
+
+function createVideoId(file) {
+  return `${file.name}::${file.size}::${file.lastModified}`;
 }

@@ -1,10 +1,12 @@
 import { createDictation } from "./modules/dictation.js";
+import { applyStaticI18n, getUILang, setUILang, t } from "./modules/i18n.js";
 import { createLookup } from "./modules/lookup.js";
 import { createMask } from "./modules/mask.js";
 import { createNotebook } from "./modules/notebook.js";
 import { createPlayer } from "./modules/player.js";
 
 const $ = (selector) => document.querySelector(selector);
+let dictation;
 
 const els = {
   video: $("#video"),
@@ -27,13 +29,13 @@ const els = {
   recordCount: $("#recordCount"),
   exportDictationBtn: $("#exportDictationBtn"),
   languageSelect: $("#languageSelect"),
+  uiLangSelect: $("#uiLangSelect"),
+  apiStatus: $("#apiStatus"),
   selectedText: $("#selectedText"),
   lookupWord: $("#lookupWord"),
   lookupReading: $("#lookupReading"),
   lookupTag: $("#lookupTag"),
   lookupMeaning: $("#lookupMeaning"),
-  grammarTitle: $("#grammarTitle"),
-  grammarMeaning: $("#grammarMeaning"),
   saveNoteBtn: $("#saveNoteBtn"),
   noteCount: $("#noteCount"),
   notebookList: $("#notebookList"),
@@ -58,9 +60,12 @@ const player = createPlayer({
   timeReadout: els.timeReadout,
   speedBtn: els.speedBtn,
   emptyVideo: els.emptyVideo,
+  onVideoLoaded: (videoSession) => {
+    dictation?.setSession(videoSession);
+  },
 });
 
-createMask({
+const mask = createMask({
   stage: els.videoStage,
   mask: els.subtitleMask,
   handle: els.maskHandle,
@@ -80,18 +85,22 @@ const notebook = createNotebook({
 const lookup = createLookup({
   languageSelect: els.languageSelect,
   input: els.dictationInput,
+  apiStatus: els.apiStatus,
   selectedText: els.selectedText,
   lookupWord: els.lookupWord,
   lookupReading: els.lookupReading,
   lookupTag: els.lookupTag,
   lookupMeaning: els.lookupMeaning,
-  grammarTitle: els.grammarTitle,
-  grammarMeaning: els.grammarMeaning,
   saveButton: els.saveNoteBtn,
-  onSave: notebook.addNote,
+  onSave: (note) => {
+    notebook.addNote({
+      ...note,
+      source: `${player.getVideoName()} · ${player.formatTime(player.getCurrentTime())}`,
+    });
+  },
 });
 
-createDictation({
+dictation = createDictation({
   form: els.dictationForm,
   input: els.dictationInput,
   recordsList: els.recordsList,
@@ -99,16 +108,34 @@ createDictation({
   exportButton: els.exportDictationBtn,
   getCurrentTime: player.getCurrentTime,
   formatTime: player.formatTime,
-  getVideoName: () => els.fileName.textContent,
+  getVideoName: player.getVideoName,
   onSelection: lookup.lookup,
 });
 
 function applyTheme(theme) {
   document.body.dataset.theme = theme;
   els.themeIcon.textContent = theme === "dark" ? "☀" : "☾";
-  els.themeLabel.textContent = theme === "dark" ? "薄荷 Light" : "深青绿";
+  els.themeLabel.textContent = theme === "dark" ? t("themeLightLabel") : t("themeDarkLabel");
   localStorage.setItem("subly_theme", theme);
 }
+
+function applyUILang(lang) {
+  setUILang(lang);
+  els.uiLangSelect.value = lang;
+  applyStaticI18n();
+  mask.refresh();
+  lookup.refresh();
+  dictation.refresh();
+  notebook.refresh();
+  applyTheme(document.body.dataset.theme || "light");
+}
+
+els.uiLangSelect.value = getUILang();
+applyStaticI18n();
+
+els.uiLangSelect.addEventListener("change", () => {
+  applyUILang(els.uiLangSelect.value);
+});
 
 applyTheme(localStorage.getItem("subly_theme") || "light");
 

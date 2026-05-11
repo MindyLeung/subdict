@@ -1,3 +1,5 @@
+import { t } from "./i18n.js";
+
 const HEIGHT_KEY = "subly_mask_height";
 const VISIBLE_KEY = "subly_mask_visible";
 
@@ -12,7 +14,7 @@ export function createMask({ stage, mask, handle, toggle }) {
 
   function applyVisibility() {
     mask.classList.toggle("is-hidden", !visible);
-    toggle.textContent = visible ? "遮罩开" : "遮罩关";
+    toggle.textContent = visible ? t("maskOn") : t("maskOff");
     localStorage.setItem(VISIBLE_KEY, String(visible));
   }
 
@@ -61,4 +63,6 @@ export function createMask({ stage, mask, handle, toggle }) {
   });
 
   applyVisibility();
+
+  return { refresh: applyVisibility };
 }

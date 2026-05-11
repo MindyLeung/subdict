@@ -1,4 +1,11 @@
-const RECORDS_KEY = "subly_dictation_records";
+import { t } from "./i18n.js";
+
+const SESSION_KEY = "subly_active_session";
+const LEGACY_RECORDS_KEY = "subly_dictation_records";
+const DEFAULT_SESSION = {
+  id: "subly_default_session",
+  name: "未命名视频",
+};
 
 export function createDictation({
   form,
@@ -11,25 +18,47 @@ export function createDictation({
   getVideoName,
   onSelection,
 }) {
-  let records = loadRecords();
+  let session = loadActiveSession();
+  let records = loadRecords(session.id);
 
-  function loadRecords() {
+  function storageKey(sessionId) {
+    return `subly_dictation_records:${sessionId}`;
+  }
+
+  function loadActiveSession() {
     try {
-      return JSON.parse(localStorage.getItem(RECORDS_KEY) || "[]");
+      return JSON.parse(localStorage.getItem(SESSION_KEY) || "null") || DEFAULT_SESSION;
+    } catch {
+      return DEFAULT_SESSION;
+    }
+  }
+
+  function saveActiveSession() {
+    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  }
+
+  function loadRecords(sessionId) {
+    try {
+      const sessionRecords = localStorage.getItem(storageKey(sessionId));
+      if (sessionRecords) return sortBySeconds(JSON.parse(sessionRecords));
+
+      const legacyRecords = localStorage.getItem(LEGACY_RECORDS_KEY);
+      if (sessionId === DEFAULT_SESSION.id && legacyRecords) return sortBySeconds(JSON.parse(legacyRecords));
+      return [];
     } catch {
       return [];
     }
   }
 
   function persist() {
-    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+    localStorage.setItem(storageKey(session.id), JSON.stringify(records));
   }
 
   function render() {
-    recordCount.textContent = `已记录 ${records.length} 条`;
+    recordCount.textContent = t("recordCount", records.length);
 
     if (!records.length) {
-      recordsList.innerHTML = '<div class="empty-state">还没有听写记录，输入第一句开始。</div>';
+      recordsList.innerHTML = `<div class="empty-state">${t("dictationEmpty")}</div>`;
       return;
     }
 
@@ -38,7 +67,7 @@ export function createDictation({
         (record) => `
           <article class="record" data-id="${record.id}">
             <time>${record.timestamp}</time>
-            <p>${escapeHtml(record.text)}</p>
+            <p contenteditable="true" spellcheck="false">${escapeHtml(record.text)}</p>
             <button class="delete-record" type="button" title="删除">×</button>
           </article>
         `,
@@ -49,13 +78,17 @@ export function createDictation({
   function addRecord(text) {
     const trimmed = text.trim();
     if (!trimmed) return;
+    const t = getCurrentTime();
     records.push({
       id: crypto.randomUUID(),
       text: trimmed,
-      seconds: getCurrentTime(),
-      timestamp: formatTime(getCurrentTime()),
+      seconds: t,
+      timestamp: formatTime(t),
+      videoId: session.id,
+      videoName: session.name,
       createdAt: Date.now(),
     });
+    records = sortBySeconds(records);
     persist();
     render();
   }
@@ -82,6 +115,19 @@ export function createDictation({
     render();
   });
 
+  recordsList.addEventListener("focusout", (event) => {
+    const textEl = event.target.closest(".record p");
+    if (!textEl) return;
+    const recordEl = textEl.closest(".record");
+    const record = records.find((item) => item.id === recordEl.dataset.id);
+    if (!record) return;
+    record.text = textEl.textContent.trim();
+    record.updatedAt = Date.now();
+    records = sortBySeconds(records);
+    persist();
+    render();
+  });
+
   document.addEventListener("selectionchange", () => {
     const selection = window.getSelection()?.toString().trim();
     if (selection && selection.length <= 120) {
@@ -97,7 +143,7 @@ export function createDictation({
     const videoName = getVideoName().replace(/\.[^.]+$/, "") || "Subly";
     const date = new Date().toISOString().slice(0, 10);
     link.href = url;
-    link.download = `${videoName}_听写_${date}.txt`;
+    link.download = `${videoName}_${t("exportSuffix")}_${date}.txt`;
     link.click();
     URL.revokeObjectURL(url);
   });
@@ -106,8 +152,20 @@ export function createDictation({
 
   return {
     addRecord,
+    refresh: render,
+    setSession(nextSession) {
+      session = nextSession || DEFAULT_SESSION;
+      saveActiveSession();
+      records = loadRecords(session.id);
+      render();
+    },
+    getSession: () => ({ ...session }),
     getRecords: () => [...records],
   };
+}
+
+function sortBySeconds(list) {
+  return list.slice().sort((a, b) => (a.seconds ?? 0) - (b.seconds ?? 0));
 }
 
 function escapeHtml(value) {

@@ -1,3 +1,5 @@
+import { t } from "./i18n.js";
+
 const NOTES_KEY = "subly_notes";
 
 export function createNotebook({
@@ -8,6 +10,7 @@ export function createNotebook({
   notebookTab,
   lookupView,
   notebookView,
+  getSource,
 }) {
   let notes = loadNotes();
 
@@ -34,7 +37,7 @@ export function createNotebook({
   function render() {
     noteCount.textContent = `(${notes.length})`;
     if (!notes.length) {
-      notebookList.innerHTML = '<div class="empty-state">还没有收藏。选中文字查词后可以保存到这里。</div>';
+      notebookList.innerHTML = `<div class="empty-state">${t("notebookEmpty")}</div>`;
       return;
     }
 
@@ -48,6 +51,7 @@ export function createNotebook({
             </header>
             <p>${escapeHtml(note.reading || "")}</p>
             <p>${escapeHtml(note.meaning || "")}</p>
+            ${note.source ? `<p class="note-source">${escapeHtml(note.source)}</p>` : ""}
             <span class="tag">${note.language === "en" ? "English" : "日本語"}</span>
           </article>
         `,
@@ -58,6 +62,7 @@ export function createNotebook({
   function addNote(note) {
     notes.unshift({
       id: crypto.randomUUID(),
+      source: getSource?.() || "",
       ...note,
     });
     persist();
@@ -82,6 +87,7 @@ export function createNotebook({
 
   return {
     addNote,
+    refresh: render,
     setTab,
     getNotes: () => [...notes],
   };

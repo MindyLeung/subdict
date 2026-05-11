@@ -9,7 +9,7 @@
   <body>
     <div class="desktop-guard">
       <h1>Subly</h1>
-      <p>Subly MVP 目前专为桌面端设计。请在更宽的屏幕上打开。</p>
+      <p data-i18n="desktopGuardMsg">Subly is designed for desktop. Please use a wider screen.</p>
     </div>
 
     <main class="app-shell">
@@ -18,9 +18,9 @@
           Sub<span>ly</span>
         </div>
 
-        <div class="file-chip" id="fileName">视频文件名.mp4</div>
+        <div class="file-chip" id="fileName">video_file.mp4</div>
 
-        <label class="select-wrap" aria-label="目标语言">
+        <label class="select-wrap" data-i18n-aria-label="studyLangAriaLabel" aria-label="Study language">
           <span class="select-icon">文</span>
           <select id="languageSelect">
             <option value="ja">日本語</option>
@@ -28,86 +28,104 @@
           </select>
         </label>
 
+        <label class="select-wrap" data-i18n-title="uiLangToggleTitle" title="Interface language">
+          <span class="select-icon">🌐</span>
+          <select id="uiLangSelect">
+            <option value="en">EN</option>
+            <option value="zh">中文</option>
+          </select>
+        </label>
+
         <div class="topbar-spacer"></div>
 
-        <button class="ghost-button" id="themeToggle" type="button" title="切换明暗主题">
+        <button class="ghost-button" id="themeToggle" type="button"
+          data-i18n-title="themeToggleTitle" title="Toggle theme">
           <span id="themeIcon">☾</span>
-          <span id="themeLabel">深青绿</span>
+          <span id="themeLabel">Dark Teal</span>
         </button>
         <button class="ghost-button" id="exportDictationBtn" type="button">
           <span>↓</span>
-          导出听写
+          <span data-i18n="exportBtn">Export</span>
         </button>
         <button class="ghost-button" id="openNotebookBtn" type="button">
           <span>▣</span>
-          笔记本 <span id="noteCount">(0)</span>
+          <span data-i18n="notebookBtnLabel">Notebook</span>
+          <span id="noteCount">(0)</span>
         </button>
         <label class="primary-button">
           <span>↑</span>
-          导入视频
+          <span data-i18n="importBtn">Import Video</span>
           <input id="videoInput" type="file" accept="video/*,.mp4,.m4v,.mov,.webm,.mkv,.avi" hidden />
         </label>
       </header>
 
-      <section class="workspace" aria-label="Subly 工作区">
+      <section class="workspace" aria-label="Subly workspace">
         <div class="left-pane">
-          <section class="video-card" aria-label="视频播放器">
+          <section class="video-card" aria-label="Video player">
             <div class="video-stage" id="videoStage">
               <video id="video" class="video-el"></video>
               <div class="empty-video" id="emptyVideo">
                 <div class="play-mark">▷</div>
-                <strong>视频画面区域</strong>
-                <span>导入本地视频后开始听写</span>
+                <strong data-i18n="emptyVideoTitle">Video Area</strong>
+                <span data-i18n="emptyVideoHint">Import a video to start dictation</span>
               </div>
               <div class="subtitle-mask" id="subtitleMask">
-                <button class="mask-handle" id="maskHandle" type="button" title="拖动调节遮罩高度"></button>
-                <span class="mask-label">字幕遮罩</span>
+                <button class="mask-handle" id="maskHandle" type="button"
+                  data-i18n-title="maskTip" title="↕ Drag to adjust mask height"></button>
+                <span class="mask-label" data-i18n="maskLabel">Subtitle Mask</span>
               </div>
-              <div class="mask-tip">↕ 拖动调节遮罩高度</div>
+              <div class="mask-tip" data-i18n="maskTip">↕ Drag to adjust mask height</div>
             </div>
 
             <div class="player-controls">
-              <button class="icon-button" id="backBtn" type="button" title="快退 5 秒">|‹</button>
-              <button class="icon-button" id="playBtn" type="button" title="播放/暂停">▶</button>
-              <button class="icon-button" id="forwardBtn" type="button" title="快进 5 秒">›|</button>
+              <button class="icon-button" id="backBtn" type="button"
+                data-i18n-title="backBtnTitle" title="Rewind 5s">|‹</button>
+              <button class="icon-button" id="playBtn" type="button"
+                data-i18n-title="playBtnTitle" title="Play / Pause">▶</button>
+              <button class="icon-button" id="forwardBtn" type="button"
+                data-i18n-title="forwardBtnTitle" title="Forward 5s">›|</button>
               <input id="seekBar" class="seek-bar" type="range" min="0" max="100" value="0" />
               <span class="time-readout" id="timeReadout">00:00 / 00:00</span>
               <button class="speed-button" id="speedBtn" type="button">1x</button>
-              <button class="mask-toggle" id="maskToggle" type="button">遮罩开</button>
+              <button class="mask-toggle" id="maskToggle" type="button">Mask On</button>
             </div>
           </section>
 
-          <section class="dictation-card" aria-label="听写记录">
+          <section class="dictation-card" aria-label="Dictation">
             <div class="section-header">
               <div>
                 <span class="header-icon">⌨</span>
-                <strong>听写记录</strong>
-                <span id="recordCount">已记录 0 条</span>
+                <strong data-i18n="dictationTitle">Dictation</strong>
+                <span id="recordCount" data-i18n-aria-label="recordCountLabel">0 records</span>
               </div>
-              <span>选中文字可查词</span>
+              <span data-i18n="dictationHint">Select text to look up</span>
             </div>
 
             <div class="records" id="recordsList"></div>
 
             <form class="dictation-input-row" id="dictationForm">
               <span class="input-prefix">I</span>
-              <input id="dictationInput" autocomplete="off" placeholder="听到了什么，输入后按 Enter 记录..." />
+              <input id="dictationInput" autocomplete="off"
+                placeholder="Type what you heard, then press Enter…" />
               <button type="submit">↵ Enter</button>
             </form>
           </section>
         </div>
 
-        <aside class="side-panel" aria-label="查词和笔记本">
+        <aside class="side-panel" aria-label="Lookup and notebook">
           <div class="tabs">
-            <button class="tab active" id="lookupTab" type="button">查词 / 语法</button>
-            <button class="tab" id="notebookTab" type="button">笔记本</button>
+            <button class="tab active" id="lookupTab" type="button"
+              data-i18n="lookupTabLabel">Lookup</button>
+            <button class="tab" id="notebookTab" type="button"
+              data-i18n="notebookTabLabel">Notebook</button>
           </div>
 
           <section class="panel-view active" id="lookupView">
             <div class="selected-card">
-              <span>选中的词：</span>
+              <span data-i18n="selectedLabel">Selected:</span>
               <strong id="selectedText">お腹が空いた</strong>
             </div>
+            <div class="api-status" id="apiStatus">Select text in your dictation to look up.</div>
 
             <article class="lookup-card" id="lookupCard">
               <div class="lookup-title-row">
@@ -115,15 +133,16 @@
                   <h2 id="lookupWord">お腹が空いた</h2>
                   <p id="lookupReading">おなかがすいた</p>
                 </div>
-                <span class="tag" id="lookupTag">惯用表达</span>
+                <span class="tag" id="lookupTag">expression</span>
               </div>
-              <p id="lookupMeaning">肚子饿了。「空く」表示空、饿，形容持续描述当前状态。</p>
-              <button class="save-note" id="saveNoteBtn" type="button">♡ 收藏到笔记本</button>
+              <p id="lookupMeaning">I'm hungry. 「空く」means to become empty / hungry.</p>
+              <button class="save-note" id="saveNoteBtn" type="button"
+                data-i18n="saveNoteBtn">♡ Save to Notebook</button>
             </article>
 
-            <article class="grammar-card" id="grammarCard">
-              <h3 id="grammarTitle">〜たな（语法）</h3>
-              <p id="grammarMeaning">た形 + 终助词な，表示说话者对某状态的自言自语或轻微感叹。</p>
+            <article class="grammar-card" id="grammarCard" hidden>
+              <h3 id="grammarTitle"></h3>
+              <p id="grammarMeaning"></p>
             </article>
           </section>
 

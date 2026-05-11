@@ -1,30 +1,16 @@
-const LOOKUP_COPY = {
-  ja: {
-    placeholder: "聞こえた内容を入力して Enter で記録...",
-    tag: "语法 / 表达",
-    reading: "读音会显示假名",
-    grammarTitle: "日语语法分析",
-    grammarMeaning: "会重点分析助词、接续、敬体/常体、终助词和语气。",
-  },
-  en: {
-    placeholder: "Type what you heard, then press Enter...",
-    tag: "phrase",
-    reading: "Pronunciation appears as IPA",
-    grammarTitle: "英语语法分析",
-    grammarMeaning: "会重点分析时态、介词搭配、固定表达、语气和上下文用法。",
-  },
-};
+import { t } from "./i18n.js";
+
+const READING_HINT = { ja: "readingHintJa", en: "readingHintEn" };
 
 export function createLookup({
   languageSelect,
   input,
+  apiStatus,
   selectedText,
   lookupWord,
   lookupReading,
   lookupTag,
   lookupMeaning,
-  grammarTitle,
-  grammarMeaning,
   saveButton,
   onSave,
 }) {
@@ -33,34 +19,59 @@ export function createLookup({
     reading: lookupReading.textContent,
     tag: lookupTag.textContent,
     meaning: lookupMeaning.textContent,
-    grammarTitle: grammarTitle.textContent,
-    grammarMeaning: grammarMeaning.textContent,
   };
+  let requestId = 0;
 
   function applyLanguage(language) {
-    const copy = LOOKUP_COPY[language];
-    input.placeholder = copy.placeholder;
-    lookupTag.textContent = copy.tag;
+    input.placeholder = t("dictationPlaceholder");
     if (!current.word) {
-      lookupReading.textContent = copy.reading;
-      grammarTitle.textContent = copy.grammarTitle;
-      grammarMeaning.textContent = copy.grammarMeaning;
+      lookupTag.textContent = t("lookupTagDefault");
+      lookupReading.textContent = t(READING_HINT[language] ?? "readingHintEn");
     }
     localStorage.setItem("subly_language", language);
   }
 
-  function lookup(text) {
-    const language = languageSelect.value;
-    const copy = LOOKUP_COPY[language];
-    current = buildLocalResult(text, language, copy);
+  function renderStatus(message, mode = "idle") {
+    apiStatus.textContent = message;
+    apiStatus.classList.toggle("is-loading", mode === "loading");
+    apiStatus.classList.toggle("is-error", mode === "error");
+  }
 
+  function renderResult(result) {
+    current = normalizeResult(result);
     selectedText.textContent = current.word;
     lookupWord.textContent = current.word;
     lookupReading.textContent = current.reading;
     lookupTag.textContent = current.tag;
     lookupMeaning.textContent = current.meaning;
-    grammarTitle.textContent = current.grammarTitle;
-    grammarMeaning.textContent = current.grammarMeaning;
+  }
+
+  async function lookup(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    const language = languageSelect.value;
+    const activeRequest = ++requestId;
+    renderStatus(t("lookupStatusLoading"), "loading");
+
+    try {
+      const result =
+        language === "en"
+          ? await fetchEnglishLookup(trimmed)
+          : await fetchJapaneseLookup(trimmed);
+      if (activeRequest !== requestId) return;
+      renderResult(result);
+      renderStatus(t("lookupStatusDone"));
+    } catch (error) {
+      if (activeRequest !== requestId) return;
+      renderStatus(error.message || t("lookupError", "?"), "error");
+      renderResult({ word: trimmed, reading: "", tag: "", meaning: "" });
+    }
+  }
+
+  function refresh() {
+    applyLanguage(languageSelect.value);
+    renderStatus(t("lookupStatusIdle"));
   }
 
   languageSelect.value = localStorage.getItem("subly_language") || "ja";
@@ -78,33 +89,72 @@ export function createLookup({
     });
   });
 
+  renderStatus(t("lookupStatusIdle"));
+
   return {
     lookup,
+    refresh,
     getCurrent: () => ({ ...current }),
   };
 }
 
-function buildLocalResult(text, language, copy) {
-  const trimmed = text.trim();
-  const isSentence = /[。.!?！？\s]/.test(trimmed) || trimmed.length > 12;
+async function fetchEnglishLookup(word) {
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`;
+  const response = await fetch(url);
 
-  if (language === "en") {
-    return {
-      word: trimmed,
-      reading: copy.reading,
-      tag: isSentence ? "sentence" : "word",
-      meaning: "这里会显示 Groq 返回的中文释义。当前版本先保留本地预览，方便把界面和笔记流程跑通。",
-      grammarTitle: "语法 / 用法",
-      grammarMeaning: "接入 API 后会根据所选文本分析时态、搭配、固定表达和语气。",
-    };
+  if (!response.ok) {
+    if (response.status === 404) throw new Error(t("lookupNotFound", word));
+    throw new Error(t("lookupError", response.status));
+  }
+
+  const data = await response.json();
+  const entry = data[0];
+  const meaning = entry.meanings?.[0];
+  const definition = meaning?.definitions?.[0];
+
+  let meaningText = definition?.definition || "";
+  if (definition?.example) {
+    meaningText += `\nE.g.: ${definition.example}`;
   }
 
   return {
-    word: trimmed,
-    reading: copy.reading,
-    tag: isSentence ? "句子" : "词汇",
-    meaning: "这里会显示 Groq 返回的中文释义。当前版本先保留本地预览，方便把界面和笔记流程跑通。",
-    grammarTitle: "语法 / 用法",
-    grammarMeaning: "接入 API 后会根据所选文本分析助词、接续、敬语、终助词和语气。",
+    word: entry.word,
+    reading:
+      entry.phonetic ||
+      entry.phonetics?.find((p) => p.text)?.text ||
+      "",
+    tag: meaning?.partOfSpeech || "word",
+    meaning: meaningText,
+  };
+}
+
+async function fetchJapaneseLookup(word) {
+  const url = `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(word)}`;
+  const response = await fetch(url);
+
+  if (!response.ok) throw new Error(t("lookupError", response.status));
+
+  const data = await response.json();
+  const entry = data?.data?.[0];
+
+  if (!entry) throw new Error(t("lookupNotFound", word));
+
+  const japanese = entry.japanese?.[0];
+  const sense = entry.senses?.[0];
+
+  return {
+    word: japanese?.word || word,
+    reading: japanese?.reading || "",
+    tag: sense?.parts_of_speech?.[0] || "",
+    meaning: sense?.english_definitions?.join("；") || "",
+  };
+}
+
+function normalizeResult(result) {
+  return {
+    word: String(result.word || ""),
+    reading: String(result.reading || ""),
+    tag: String(result.tag || ""),
+    meaning: String(result.meaning || ""),
   };
 }
