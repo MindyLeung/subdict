@@ -1,4 +1,4 @@
-const UI_LANG_KEY = "subly_ui_lang";
+const UI_LANG_KEY = "subdict_ui_lang";
 
 const PACKS = {
   en: {
@@ -6,15 +6,15 @@ const PACKS = {
     uiLangToggleTitle: "Interface language",
     studyLangAriaLabel: "Study language",
     themeToggleTitle: "Toggle theme",
-    themeDarkLabel: "Dark Teal",
-    themeLightLabel: "Mint Light",
+    themeDarkLabel: "Dark",
+    themeLightLabel: "Light",
     exportBtn: "Export",
     notebookBtnLabel: "Notebook",
     importBtn: "Import Video",
 
     // video area
     emptyVideoTitle: "Video Area",
-    emptyVideoHint: "Import a video to start dictation",
+    emptyVideoHint: "Drag a video here or click Import Video",
     maskLabel: "Subtitle Mask",
     maskTip: "↕ Drag to adjust mask height",
     backBtnTitle: "Rewind 5s",
@@ -50,8 +50,12 @@ const PACKS = {
     // notebook
     notebookEmpty: "No saved notes yet. Look up a word and save it here.",
 
+    // drag and drop
+    dropToImport: "Drop video to import",
+    dropVideoOnly: "Please drop a video file",
+
     // desktop guard
-    desktopGuardMsg: "Subly is designed for desktop. Please use a wider screen.",
+    desktopGuardMsg: "Subdict is designed for desktop. Please use a wider screen.",
   },
 
   zh: {
@@ -59,15 +63,15 @@ const PACKS = {
     uiLangToggleTitle: "界面语言",
     studyLangAriaLabel: "学习语言",
     themeToggleTitle: "切换明暗主题",
-    themeDarkLabel: "深青绿",
-    themeLightLabel: "薄荷 Light",
+    themeDarkLabel: "深色",
+    themeLightLabel: "浅色",
     exportBtn: "导出听写",
     notebookBtnLabel: "笔记本",
     importBtn: "导入视频",
 
     // video area
     emptyVideoTitle: "视频画面区域",
-    emptyVideoHint: "导入本地视频后开始听写",
+    emptyVideoHint: "拖入视频文件，或点击「导入视频」",
     maskLabel: "字幕遮罩",
     maskTip: "↕ 拖动调节遮罩高度",
     backBtnTitle: "快退 5 秒",
@@ -103,8 +107,12 @@ const PACKS = {
     // notebook
     notebookEmpty: "还没有收藏。选中文字查词后可以保存到这里。",
 
+    // drag and drop
+    dropToImport: "拖入视频文件",
+    dropVideoOnly: "请拖入视频文件",
+
     // desktop guard
-    desktopGuardMsg: "Subly MVP 目前专为桌面端设计。请在更宽的屏幕上打开。",
+    desktopGuardMsg: "Subdict MVP 目前专为桌面端设计。请在更宽的屏幕上打开。",
   },
 };
 

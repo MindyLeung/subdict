@@ -28,7 +28,7 @@ export function createLookup({
       lookupTag.textContent = t("lookupTagDefault");
       lookupReading.textContent = t(READING_HINT[language] ?? "readingHintEn");
     }
-    localStorage.setItem("subly_language", language);
+    localStorage.setItem("subdict_language", language);
   }
 
   function renderStatus(message, mode = "idle") {
@@ -55,10 +55,7 @@ export function createLookup({
     renderStatus(t("lookupStatusLoading"), "loading");
 
     try {
-      const result =
-        language === "en"
-          ? await fetchEnglishLookup(trimmed)
-          : await fetchJapaneseLookup(trimmed);
+      const result = await fetchWorkerLookup(trimmed, language);
       if (activeRequest !== requestId) return;
       renderResult(result);
       renderStatus(t("lookupStatusDone"));
@@ -74,7 +71,7 @@ export function createLookup({
     renderStatus(t("lookupStatusIdle"));
   }
 
-  languageSelect.value = localStorage.getItem("subly_language") || "ja";
+  languageSelect.value = localStorage.getItem("subdict_language") || "ja";
   applyLanguage(languageSelect.value);
 
   languageSelect.addEventListener("change", () => {
@@ -98,9 +95,14 @@ export function createLookup({
   };
 }
 
-async function fetchEnglishLookup(word) {
-  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`;
-  const response = await fetch(url);
+const WORKER_URL = "https://steep-fog-5094.mindyl123456.workers.dev";
+
+async function fetchWorkerLookup(word, lang) {
+  const response = await fetch(WORKER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ word, lang }),
+  });
 
   if (!response.ok) {
     if (response.status === 404) throw new Error(t("lookupNotFound", word));
@@ -108,46 +110,7 @@ async function fetchEnglishLookup(word) {
   }
 
   const data = await response.json();
-  const entry = data[0];
-  const meaning = entry.meanings?.[0];
-  const definition = meaning?.definitions?.[0];
-
-  let meaningText = definition?.definition || "";
-  if (definition?.example) {
-    meaningText += `\nE.g.: ${definition.example}`;
-  }
-
-  return {
-    word: entry.word,
-    reading:
-      entry.phonetic ||
-      entry.phonetics?.find((p) => p.text)?.text ||
-      "",
-    tag: meaning?.partOfSpeech || "word",
-    meaning: meaningText,
-  };
-}
-
-async function fetchJapaneseLookup(word) {
-  const url = `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(word)}`;
-  const response = await fetch(url);
-
-  if (!response.ok) throw new Error(t("lookupError", response.status));
-
-  const data = await response.json();
-  const entry = data?.data?.[0];
-
-  if (!entry) throw new Error(t("lookupNotFound", word));
-
-  const japanese = entry.japanese?.[0];
-  const sense = entry.senses?.[0];
-
-  return {
-    word: japanese?.word || word,
-    reading: japanese?.reading || "",
-    tag: sense?.parts_of_speech?.[0] || "",
-    meaning: sense?.english_definitions?.join("；") || "",
-  };
+  return normalizeResult(data);
 }
 
 function normalizeResult(result) {

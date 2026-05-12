@@ -1,9 +1,9 @@
 import { t } from "./i18n.js";
 
-const SESSION_KEY = "subly_active_session";
-const LEGACY_RECORDS_KEY = "subly_dictation_records";
+const SESSION_KEY = "subdict_active_session";
+const LEGACY_RECORDS_KEY = "subdict_dictation_records";
 const DEFAULT_SESSION = {
-  id: "subly_default_session",
+  id: "subdict_default_session",
   name: "未命名视频",
 };
 
@@ -22,7 +22,7 @@ export function createDictation({
   let records = loadRecords(session.id);
 
   function storageKey(sessionId) {
-    return `subly_dictation_records:${sessionId}`;
+    return `subdict_dictation_records:${sessionId}`;
   }
 
   function loadActiveSession() {
@@ -151,7 +151,7 @@ export function createDictation({
     const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    const videoName = getVideoName().replace(/\.[^.]+$/, "") || "Subly";
+    const videoName = getVideoName().replace(/\.[^.]+$/, "") || "Subdict";
     const date = new Date().toISOString().slice(0, 10);
     link.href = url;
     link.download = `${videoName}_${t("exportSuffix")}_${date}.txt`;

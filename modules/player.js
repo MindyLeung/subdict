@@ -13,9 +13,12 @@ export function createPlayer({
   timeReadout,
   speedBtn,
   emptyVideo,
+  dropOverlay,
+  toastEl,
   onVideoLoaded,
 }) {
   let speedIndex = 2;
+  let toastTimer;
 
   function formatTime(seconds) {
     if (!Number.isFinite(seconds)) return "00:00";
@@ -44,16 +47,10 @@ export function createPlayer({
 
   function togglePlay() {
     if (!video.src) return;
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
+    if (video.paused) { video.play(); } else { video.pause(); }
   }
 
-  videoInput.addEventListener("change", () => {
-    const file = videoInput.files?.[0];
-    if (!file) return;
+  function loadFile(file) {
     const url = URL.createObjectURL(file);
     if (video.src?.startsWith("blob:")) {
       URL.revokeObjectURL(video.src);
@@ -69,8 +66,53 @@ export function createPlayer({
       lastModified: file.lastModified,
     });
     updateControls();
+  }
+
+  function showToast(message) {
+    clearTimeout(toastTimer);
+    toastEl.hidden = true;
+    // Force reflow so the animation replays on repeat toasts
+    void toastEl.offsetWidth;
+    toastEl.textContent = message;
+    toastEl.hidden = false;
+    toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3000);
+  }
+
+  // ── File input (existing button) ────────────────────
+  videoInput.addEventListener("change", () => {
+    const file = videoInput.files?.[0];
+    if (!file) return;
+    loadFile(file);
   });
 
+  // ── Drag and drop ───────────────────────────────────
+  document.addEventListener("dragenter", (e) => {
+    e.preventDefault();
+    dropOverlay.hidden = false;
+  });
+
+  document.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
+
+  document.addEventListener("dragleave", (e) => {
+    // relatedTarget is null only when the pointer leaves the browser window entirely
+    if (e.relatedTarget === null) dropOverlay.hidden = true;
+  });
+
+  document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropOverlay.hidden = true;
+    const file = e.dataTransfer?.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("video/")) {
+      showToast(t("dropVideoOnly"));
+      return;
+    }
+    loadFile(file);
+  });
+
+  // ── Playback controls ───────────────────────────────
   playBtn.addEventListener("click", togglePlay);
   video.addEventListener("click", togglePlay);
   video.addEventListener("loadedmetadata", updateControls);
@@ -109,11 +151,9 @@ export function createPlayer({
       event.preventDefault();
       togglePlay();
     }
-
     if (event.code === "ArrowLeft") {
       video.currentTime = Math.max(0, video.currentTime - 5);
     }
-
     if (event.code === "ArrowRight") {
       video.currentTime = Math.min(video.duration || video.currentTime + 5, video.currentTime + 5);
     }

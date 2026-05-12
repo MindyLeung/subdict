@@ -1,6 +1,6 @@
 import { t } from "./i18n.js";
 
-const NOTES_KEY = "subly_notes";
+const NOTES_KEY = "subdict_notes";
 
 export function createNotebook({
   noteCount,

@@ -1,7 +1,7 @@
 import { t } from "./i18n.js";
 
-const HEIGHT_KEY = "subly_mask_height";
-const VISIBLE_KEY = "subly_mask_visible";
+const HEIGHT_KEY = "subdict_mask_height";
+const VISIBLE_KEY = "subdict_mask_visible";
 
 export function createMask({ stage, mask, handle, toggle }) {
   const savedHeight = localStorage.getItem(HEIGHT_KEY);

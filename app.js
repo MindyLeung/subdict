@@ -28,6 +28,8 @@ const els = {
   recordsList: $("#recordsList"),
   recordCount: $("#recordCount"),
   exportDictationBtn: $("#exportDictationBtn"),
+  dropOverlay: $("#dropOverlay"),
+  toastEl: $("#toastEl"),
   languageSelect: $("#languageSelect"),
   uiLangSelect: $("#uiLangSelect"),
   apiStatus: $("#apiStatus"),
@@ -45,7 +47,6 @@ const els = {
   lookupView: $("#lookupView"),
   notebookView: $("#notebookView"),
   themeToggle: $("#themeToggle"),
-  themeIcon: $("#themeIcon"),
   themeLabel: $("#themeLabel"),
 };
 
@@ -60,6 +61,8 @@ const player = createPlayer({
   timeReadout: els.timeReadout,
   speedBtn: els.speedBtn,
   emptyVideo: els.emptyVideo,
+  dropOverlay: els.dropOverlay,
+  toastEl: els.toastEl,
   onVideoLoaded: (videoSession) => {
     dictation?.setSession(videoSession);
   },
@@ -114,9 +117,8 @@ dictation = createDictation({
 
 function applyTheme(theme) {
   document.body.dataset.theme = theme;
-  els.themeIcon.textContent = theme === "dark" ? "☀" : "☾";
-  els.themeLabel.textContent = theme === "dark" ? t("themeLightLabel") : t("themeDarkLabel");
-  localStorage.setItem("subly_theme", theme);
+  els.themeLabel.textContent = theme === "dark" ? t("themeDarkLabel") : t("themeLightLabel");
+  localStorage.setItem("subdict_theme", theme);
 }
 
 function applyUILang(lang) {
@@ -137,7 +139,7 @@ els.uiLangSelect.addEventListener("change", () => {
   applyUILang(els.uiLangSelect.value);
 });
 
-applyTheme(localStorage.getItem("subly_theme") || "light");
+applyTheme(localStorage.getItem("subdict_theme") || "light");
 
 els.themeToggle.addEventListener("click", () => {
   const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
