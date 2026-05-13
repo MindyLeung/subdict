@@ -30,18 +30,26 @@ const els = {
   exportDictationBtn: $("#exportDictationBtn"),
   dropOverlay: $("#dropOverlay"),
   toastEl: $("#toastEl"),
+  lookupPopup: $("#lookupPopup"),
+  lookupPopupBtn: $("#lookupPopupBtn"),
   languageSelect: $("#languageSelect"),
   uiLangSelect: $("#uiLangSelect"),
   apiStatus: $("#apiStatus"),
+  lookupCard: $("#lookupCard"),
   selectedText: $("#selectedText"),
   lookupWord: $("#lookupWord"),
   lookupReading: $("#lookupReading"),
   lookupTag: $("#lookupTag"),
   lookupMeaning: $("#lookupMeaning"),
   saveNoteBtn: $("#saveNoteBtn"),
+  grammarCard: $("#grammarCard"),
+  grammarTitle: $("#grammarTitle"),
+  grammarMeaning: $("#grammarMeaning"),
+  saveGrammarBtn: $("#saveGrammarBtn"),
   noteCount: $("#noteCount"),
   notebookList: $("#notebookList"),
   openNotebookBtn: $("#openNotebookBtn"),
+  exportNotebookBtn: $("#exportNotebookBtn"),
   lookupTab: $("#lookupTab"),
   notebookTab: $("#notebookTab"),
   lookupView: $("#lookupView"),
@@ -79,6 +87,8 @@ const notebook = createNotebook({
   noteCount: els.noteCount,
   notebookList: els.notebookList,
   openNotebookButton: els.openNotebookBtn,
+  exportButton: els.exportNotebookBtn,
+  showToast: player.showToast,
   lookupTab: els.lookupTab,
   notebookTab: els.notebookTab,
   lookupView: els.lookupView,
@@ -89,12 +99,17 @@ const lookup = createLookup({
   languageSelect: els.languageSelect,
   input: els.dictationInput,
   apiStatus: els.apiStatus,
+  lookupCard: els.lookupCard,
   selectedText: els.selectedText,
   lookupWord: els.lookupWord,
   lookupReading: els.lookupReading,
   lookupTag: els.lookupTag,
   lookupMeaning: els.lookupMeaning,
+  grammarCard: els.grammarCard,
+  grammarTitle: els.grammarTitle,
+  grammarMeaning: els.grammarMeaning,
   saveButton: els.saveNoteBtn,
+  saveGrammarButton: els.saveGrammarBtn,
   onSave: (note) => {
     notebook.addNote({
       ...note,
@@ -112,7 +127,44 @@ dictation = createDictation({
   getCurrentTime: player.getCurrentTime,
   formatTime: player.formatTime,
   getVideoName: player.getVideoName,
-  onSelection: lookup.lookup,
+  onEmpty: () => lookup.clearPanel(),
+});
+
+// ── Word selection popup ────────────────────────────
+document.addEventListener("mouseup", (e) => {
+  const selection = window.getSelection();
+  const text = selection ? selection.toString().trim() : "";
+  if (text.length > 0 && text.length <= 120 && els.recordsList.contains(selection.anchorNode)) {
+    window._subdict_selected_word = text;
+    // Position above the selected text using its bounding rect
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const popupW = 110;
+    const x = Math.min(Math.max(rect.left + rect.width / 2 - popupW / 2, 4), window.innerWidth - popupW - 4);
+    const y = Math.max(rect.top - 44, 4);
+    els.lookupPopup.style.left = `${x}px`;
+    els.lookupPopup.style.top = `${y}px`;
+    els.lookupPopup.hidden = false;
+  } else if (!els.lookupPopup.contains(e.target)) {
+    els.lookupPopup.hidden = true;
+  }
+});
+
+document.addEventListener("mousedown", (e) => {
+  if (!els.lookupPopup.contains(e.target)) {
+    els.lookupPopup.hidden = true;
+  }
+});
+
+els.lookupPopupBtn.addEventListener("click", () => {
+  const word = window._subdict_selected_word;
+  console.log("LOOKUP WORD:", word);
+  if (!word) return;
+  els.lookupPopup.hidden = true;
+  els.lookupPopupBtn.disabled = true;
+  lookup.lookup(word).finally(() => {
+    els.lookupPopupBtn.disabled = false;
+  });
 });
 
 function applyTheme(theme) {

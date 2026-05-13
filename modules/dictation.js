@@ -16,7 +16,7 @@ export function createDictation({
   getCurrentTime,
   formatTime,
   getVideoName,
-  onSelection,
+  onEmpty,
 }) {
   let session = loadActiveSession();
   let records = loadRecords(session.id);
@@ -59,6 +59,7 @@ export function createDictation({
 
     if (!records.length) {
       recordsList.innerHTML = `<div class="empty-state">${t("dictationEmpty")}</div>`;
+      onEmpty?.();
       return;
     }
 
@@ -137,13 +138,6 @@ export function createDictation({
     records = sortBySeconds(records);
     persist();
     render();
-  });
-
-  document.addEventListener("selectionchange", () => {
-    const selection = window.getSelection()?.toString().trim();
-    if (selection && selection.length <= 120) {
-      onSelection(selection);
-    }
   });
 
   exportButton.addEventListener("click", () => {

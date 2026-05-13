@@ -8,7 +8,7 @@ const PACKS = {
     themeToggleTitle: "Toggle theme",
     themeDarkLabel: "Dark",
     themeLightLabel: "Light",
-    exportBtn: "Export",
+    exportBtn: "Export Subtitles",
     notebookBtnLabel: "Notebook",
     importBtn: "Import Video",
 
@@ -34,6 +34,7 @@ const PACKS = {
     exportSuffix: "dictation",
 
     // lookup / side panel
+    lookupPopupBtn: "Look up",
     lookupTabLabel: "Lookup",
     notebookTabLabel: "Notebook",
     selectedLabel: "Selected:",
@@ -41,14 +42,19 @@ const PACKS = {
     readingHintJa: "Reading shown as kana",
     readingHintEn: "Pronunciation shown as IPA",
     lookupStatusIdle: "Select text in your dictation to look up.",
-    lookupStatusLoading: "Looking up…",
+    lookupStatusLoading: (word) => word ? `Looking up "${word}"…` : "Looking up…",
     lookupStatusDone: "Done.",
     lookupNotFound: (word) => `No entry found for "${word}".`,
     lookupError: (code) => `Lookup failed (${code}).`,
     saveNoteBtn: "♡ Save to Notebook",
+    grammarLabel: "Grammar",
+    saveGrammarBtn: "♡ Save Grammar",
 
     // notebook
     notebookEmpty: "No saved notes yet. Look up a word and save it here.",
+    alreadySaved: "Already in notebook",
+    exportNotebookBtn: "Export Notebook",
+    notebookExportEmpty: "Notebook is empty",
 
     // drag and drop
     dropToImport: "Drop video to import",
@@ -91,6 +97,7 @@ const PACKS = {
     exportSuffix: "听写",
 
     // lookup / side panel
+    lookupPopupBtn: "查词",
     lookupTabLabel: "查词",
     notebookTabLabel: "笔记本",
     selectedLabel: "选中的词：",
@@ -98,14 +105,19 @@ const PACKS = {
     readingHintJa: "读音会显示假名",
     readingHintEn: "读音会显示 IPA",
     lookupStatusIdle: "选中听写记录中的文字，自动查词。",
-    lookupStatusLoading: "正在查询…",
+    lookupStatusLoading: (word) => word ? `查询"${word}"中…` : "正在查询…",
     lookupStatusDone: "查词完成。",
     lookupNotFound: (word) => `未找到"${word}"的词典释义。`,
     lookupError: (code) => `查词失败（${code}）。`,
     saveNoteBtn: "♡ 收藏到笔记本",
+    grammarLabel: "语法",
+    saveGrammarBtn: "♡ 保存语法",
 
     // notebook
     notebookEmpty: "还没有收藏。选中文字查词后可以保存到这里。",
+    alreadySaved: "该词已在笔记本中",
+    exportNotebookBtn: "导出笔记本",
+    notebookExportEmpty: "笔记本为空",
 
     // drag and drop
     dropToImport: "拖入视频文件",

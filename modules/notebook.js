@@ -1,4 +1,4 @@
-import { t } from "./i18n.js";
+import { t, getUILang } from "./i18n.js";
 
 const NOTES_KEY = "subdict_notes";
 
@@ -10,6 +10,8 @@ export function createNotebook({
   notebookTab,
   lookupView,
   notebookView,
+  exportButton,
+  showToast,
   getSource,
 }) {
   let notes = loadNotes();
@@ -43,32 +45,75 @@ export function createNotebook({
 
     notebookList.innerHTML = notes
       .map(
-        (note) => `
+        (note) => {
+          const displayWord = note.word.endsWith("_grammar")
+            ? note.word.slice(0, -8)
+            : note.word;
+          return `
           <article class="note-card" data-id="${note.id}">
             <header>
-              <h3>${escapeHtml(note.word)}</h3>
-              <button class="delete-note" type="button">删除</button>
+              <h3 class="note-word">${escapeHtml(displayWord)}</h3>
+              <button class="delete-note" type="button" title="Delete">×</button>
             </header>
-            <p>${escapeHtml(note.reading || "")}</p>
-            <p>${escapeHtml(note.meaning || "")}</p>
-            ${note.source ? `<p class="note-source">${escapeHtml(note.source)}</p>` : ""}
-            <span class="tag">${note.language === "en" ? "English" : "日本語"}</span>
+            ${note.reading ? `<p class="note-reading">${escapeHtml(note.reading)}</p>` : ""}
+            <p class="note-meaning">${escapeHtml(getNoteMeaning(note))}</p>
           </article>
-        `,
+        `;
+        },
       )
       .join("");
   }
 
   function addNote(note) {
+    const isDuplicate = notes.some((n) => n.word === note.word);
+    if (isDuplicate) {
+      showToast?.(t("alreadySaved"));
+      return;
+    }
     notes.unshift({
       id: crypto.randomUUID(),
       source: getSource?.() || "",
+      savedAt: new Date().toISOString(),
       ...note,
     });
     persist();
     render();
     setTab("notebook");
   }
+
+  function exportNotes() {
+    if (!notes.length) {
+      showToast?.(t("notebookExportEmpty"));
+      return;
+    }
+    const date = new Date();
+    const dateStr = date.toISOString().slice(0, 10);
+    const timeStr = date.toLocaleString();
+    const lines = [
+      "Subdict Notebook",
+      `Exported: ${timeStr}`,
+      `Total: ${notes.length} item${notes.length === 1 ? "" : "s"}`,
+      "════════════════════════════════════════",
+      "",
+      ...notes.flatMap((note, i) => [
+        `${i + 1}. ${note.word || ""}`,
+        `   Reading: ${note.reading || "—"}`,
+        `   Meaning: ${note.meaning || "—"}`,
+        `   Source: ${note.source || "—"}`,
+        `   Saved: ${note.savedAt ? new Date(note.savedAt).toLocaleString() : "—"}`,
+        "",
+      ]),
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `subdict_notebook_${dateStr}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  exportButton?.addEventListener("click", exportNotes);
 
   notebookList.addEventListener("click", (event) => {
     const button = event.target.closest(".delete-note");
@@ -91,6 +136,11 @@ export function createNotebook({
     setTab,
     getNotes: () => [...notes],
   };
+}
+
+function getNoteMeaning(note) {
+  if (getUILang() === "zh") return note.meaning_zh || note.meaning || "";
+  return note.meaning_en || note.meaning || "";
 }
 
 function escapeHtml(value) {

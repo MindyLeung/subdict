@@ -576,7 +576,6 @@ body[data-theme="dark"] .primary-button:hover {
 .selected-card,
 .lookup-card,
 .grammar-card,
-.note-card,
 .empty-state {
   border-radius: var(--radius);
 }
@@ -591,6 +590,7 @@ body[data-theme="dark"] .primary-button:hover {
 }
 
 .selected-card strong { color: var(--text); }
+.selected-card[hidden] { display: none; }
 
 .api-status {
   margin-top: 8px;
@@ -620,6 +620,8 @@ body[data-theme="dark"] .primary-button:hover {
   background: var(--surface);
   box-shadow: var(--shadow);
 }
+
+.lookup-card[hidden] { display: none; }
 
 .lookup-title-row {
   display: flex;
@@ -683,14 +685,19 @@ body[data-theme="dark"] .primary-button:hover {
   margin-top: 10px;
   padding: 11px 14px;
   border-left: 3px solid var(--accent);
-  background: var(--surface2);
+  background: var(--accent-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .grammar-card h3 {
-  margin: 0 0 5px;
+  margin: 0;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .grammar-card p {
@@ -700,48 +707,76 @@ body[data-theme="dark"] .primary-button:hover {
   line-height: 1.5;
 }
 
+.grammar-card[hidden] { display: none; }
+
 /* ── Notebook ───────────────────────────────────────── */
 
+#notebookView.active {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+}
+
+#notebookView .notebook-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.notebook-footer {
+  flex-shrink: 0;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
 .notebook-list {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
 }
 
 .note-card {
-  display: grid;
-  gap: 5px;
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   background: var(--surface2);
-  border-radius: var(--radius);
+  border-radius: 8px;
   transition: border-color 120ms;
 }
 
 .note-card:hover { border-color: var(--border2); }
 
-.note-card header {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.note-card h3 {
+.note-card * {
   margin: 0;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.note-card p {
-  margin: 0;
-  color: var(--text2);
-  font-size: 12px;
+  padding: 0;
   line-height: 1.5;
 }
 
-.note-source {
-  font-size: 11px;
+.note-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.note-word {
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text3);
+}
+
+.note-reading { font-size: 12px; color: var(--text2); }
+.note-meaning { font-size: 12px; color: var(--text2); }
+
+.delete-note {
+  flex-shrink: 0;
+  font-size: 11px;
 }
 
 .empty-state {
@@ -827,6 +862,32 @@ body[data-theme="dark"] .primary-button:hover {
 }
 
 .toast[hidden] { display: none; }
+
+/* ── Lookup popup ───────────────────────────────────── */
+
+.lookup-popup {
+  position: fixed;
+  z-index: 300;
+  pointer-events: auto;
+}
+
+.lookup-popup[hidden] { display: none; }
+
+.lookup-popup-btn {
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #051a1a;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  transition: background 100ms;
+}
+
+.lookup-popup-btn:hover { background: var(--accent-hover); }
 
 @keyframes toastSlideUp {
   from { opacity: 0; transform: translateX(-50%) translateY(8px); }

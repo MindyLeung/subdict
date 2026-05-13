@@ -165,6 +165,7 @@ export function createPlayer({
     getCurrentTime: () => video.currentTime || 0,
     getVideoName: () => fileName.textContent,
     formatTime,
+    showToast,
   };
 }
 
