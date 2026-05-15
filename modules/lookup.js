@@ -48,7 +48,8 @@ export function createLookup({
   }
 
   function getDisplayMeaning() {
-    return current.meaning_en || current.meaning || current.meaning_zh;
+    if (getUILang() === "zh") return current.meaning_zh || current.meaning_en || current.meaning;
+    return current.meaning_en || current.meaning_zh || current.meaning;
   }
 
   function clearPanel() {
