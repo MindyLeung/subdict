@@ -1,15 +1,775 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Subdict — Learn languages through the shows you love</title>
-  <meta name="description" content="Subdict is a free dictation practice tool for language learners. Import any video, cover subtitles, and practice listening with AI-powered word lookup.">
-  <link rel="icon" type="image/svg+xml" href="dictation-practice/favicon.svg">
+  <meta name="description" content="Subdict is a free dictation practice tool for language learners. Import any video, cover subtitles, and practice listening with AI-powered word lookup." />
+  <meta property="og:title" content="Subdict — Learn languages through the shows you love" />
+  <meta property="og:description" content="Free dictation practice tool. Import any video, cover subtitles, AI word lookup. No account needed." />
+  <meta property="og:type" content="website" />
+  <meta name="keywords" content="language learning, dictation practice, Japanese learning, subtitle, listening practice, vocabulary" />
+  <meta name="theme-color" content="#0d9488" />
+  <link rel="icon" type="image/svg+xml" href="dictation-practice/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --primary:       #0d9488;
+      --primary-dark:  #0f766e;
+      --primary-light: #ccfbf1;
+      --bg:            #f0faf9;
+      --bg-white:      #ffffff;
+      --text:          #0f2e2c;
+      --text-muted:    #5f8984;
+      --border:        rgba(13, 148, 136, 0.15);
+      --shadow:        0 1px 3px rgba(13,148,136,.06), 0 4px 16px rgba(13,148,136,.08);
+      --shadow-hover:  0 4px 12px rgba(13,148,136,.12), 0 8px 32px rgba(13,148,136,.10);
+      --radius:        16px;
+      --radius-sm:     10px;
+      --nav-h:         64px;
+      --max-w:         1100px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ─────────────────────────────── */
+    .topnav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(240, 250, 249, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      margin-right: auto;
+    }
+    .logo span { color: var(--primary); }
+
+    .lang-switcher {
+      display: flex;
+      gap: 2px;
+      background: rgba(13,148,136,.06);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .lang-btn.active,
+    .lang-btn:hover { background: var(--primary); color: #fff; }
+
+    /* ── Buttons ─────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .9rem;
+      text-decoration: none;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(13,148,136,.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(13,148,136,.4);
+    }
+    .btn-primary:active { transform: none; }
+    .btn-lg { padding: 14px 30px; font-size: 1rem; }
+
+    /* ── Layout ──────────────────────────── */
+    .section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Hero ────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--nav-h) + 72px) 24px 88px;
+      background:
+        radial-gradient(ellipse 80% 55% at 50% -5%, rgba(13,148,136,.16) 0%, transparent 70%),
+        var(--bg);
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.1rem, 5.5vw, 3.75rem);
+      font-weight: 700;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+    .hero-sub {
+      font-size: clamp(.95rem, 2vw, 1.15rem);
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+    .hero-note {
+      font-size: .82rem;
+      color: var(--text-muted);
+      opacity: .8;
+    }
+
+    /* ── Pain vs Solution ────────────────── */
+    .better-way { padding: 96px 0; }
+
+    .split {
+      display: flex;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .split-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: var(--primary);
+      flex-shrink: 0;
+      width: 44px;
+      opacity: .6;
+    }
+    .split-card {
+      flex: 1;
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .split-header { margin-bottom: 20px; }
+    .split-badge {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .before-badge { background: rgba(239,68,68,.1); color: #dc2626; }
+    .after-badge  { background: var(--primary-light); color: var(--primary-dark); }
+
+    .split-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .split-list li {
+      font-size: .9rem;
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.5;
+      color: var(--text);
+    }
+    .before-list li::before {
+      content: "✕";
+      position: absolute;
+      left: 0;
+      color: #dc2626;
+      font-weight: 700;
+      font-size: .75rem;
+      top: 3px;
+    }
+    .after-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+      top: 1px;
+    }
+
+    /* ── Features ────────────────────────── */
+    .features {
+      padding: 96px 0;
+      background: var(--bg-white);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform .2s ease, box-shadow .2s ease, opacity .55s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary-light);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 600; }
+    .feature-card p  { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── How it works ────────────────────── */
+    .how-it-works { padding: 96px 0; }
+
+    .steps {
+      display: flex;
+      align-items: flex-start;
+    }
+    .step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 14px;
+      padding: 0 20px;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step h3 { font-size: 1rem; font-weight: 600; }
+    .step p  { font-size: .85rem; color: var(--text-muted); line-height: 1.6; }
+
+    .step-connector {
+      flex-shrink: 0;
+      width: 48px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-light), var(--border));
+      margin-top: 24px;
+      position: relative;
+    }
+    .step-connector::after {
+      content: "";
+      position: absolute;
+      right: -6px;
+      top: -4px;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 7px solid var(--border);
+    }
+
+    /* ── Languages ───────────────────────── */
+    .languages {
+      padding: 72px 0;
+      background: var(--bg-white);
+      text-align: center;
+    }
+    .languages .section-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .languages .section-title {
+      margin-bottom: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .lang-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .lang-badge {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid rgba(13,148,136,.2);
+      border-radius: 999px;
+      padding: 9px 22px;
+      font-size: .95rem;
+      font-weight: 500;
+    }
+
+    /* ── Final CTA ───────────────────────── */
+    .final-cta {
+      padding: 104px 0;
+      text-align: center;
+      background: radial-gradient(ellipse 80% 60% at 50% 110%, rgba(13,148,136,.13) 0%, transparent 70%);
+    }
+    .final-cta .section-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .final-cta h2 {
+      font-size: clamp(1.75rem, 4vw, 2.6rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+    .final-note { font-size: .83rem; color: var(--text-muted); }
+
+    /* ── Footer ──────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    footer p { font-size: .82rem; color: var(--text-muted); }
+    .footer-nav { display: flex; gap: 20px; align-items: center; }
+    .footer-nav a {
+      font-size: .82rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .footer-nav a:hover { text-decoration: underline; }
+    .footer-nav span { font-size: .82rem; color: var(--text-muted); }
+
+    /* ── Animations ──────────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ──────────────────────── */
+    @media (max-width: 860px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .nav-cta { display: none; }
+
+      .split { flex-direction: column; }
+      .split-divider { width: 100%; height: 32px; transform: rotate(90deg); margin: -4px 0; }
+
+      .steps { flex-direction: column; align-items: center; gap: 36px; }
+      .step  { padding: 0; max-width: 320px; }
+      .step-connector { display: none; }
+
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Subdict</h1>
-  <p>Learn languages through the shows you love</p>
-  <a href="/subdict/dictation-practice/">Open Dictation Practice Tool</a>
+
+  <!-- ── Nav ────────────────────────────── -->
+  <nav class="topnav">
+    <div class="nav-inner">
+      <a class="logo" href="#" aria-label="Subdict home">Sub<span>dict</span></a>
+      <div class="lang-switcher" role="group" aria-label="Language">
+        <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <button class="lang-btn" data-lang="zh-TW" aria-pressed="false">繁體</button>
+        <button class="lang-btn" data-lang="ja" aria-pressed="false">日本語</button>
+      </div>
+      <a class="btn btn-primary nav-cta" href="/subdict/dictation-practice/" data-i18n="navCta">Try Free →</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ── Hero ───────────────────────────── -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero-inner fade-up">
+        <h1 data-i18n="heroHeadline">Learn languages through the shows you love</h1>
+        <p class="hero-sub" data-i18n="heroSub">Import any video, cover the subtitles, and practice dictation with AI-powered word lookup. Free, private, no account needed.</p>
+        <a class="btn btn-primary btn-lg" href="/subdict/dictation-practice/" data-i18n="heroCta">Start Dictation Practice →</a>
+        <p class="hero-note" data-i18n="heroNote">No account required · Works in your browser · 100% free</p>
+      </div>
+    </section>
+
+    <!-- ── Pain vs Solution ───────────────── -->
+    <section class="better-way" aria-labelledby="better-way-title">
+      <div class="section-inner">
+        <h2 id="better-way-title" class="section-title fade-up" data-i18n="painTitle">A better way to learn</h2>
+        <div class="split fade-up">
+          <div class="split-card split-before">
+            <div class="split-header">
+              <span class="split-badge before-badge" data-i18n="beforeLabel">Before</span>
+            </div>
+            <ul class="split-list before-list">
+              <li data-i18n="beforeItem0">Switching between video player, dictionary, and notes</li>
+              <li data-i18n="beforeItem1">Manually covering subtitles with your hand</li>
+              <li data-i18n="beforeItem2">No way to track what you've learned</li>
+            </ul>
+          </div>
+          <div class="split-divider" aria-hidden="true">→</div>
+          <div class="split-card split-after">
+            <div class="split-header">
+              <span class="split-badge after-badge" data-i18n="afterLabel">With Subdict</span>
+            </div>
+            <ul class="split-list after-list">
+              <li data-i18n="afterItem0">Everything in one tab</li>
+              <li data-i18n="afterItem1">Smart subtitle mask, adjustable with one drag</li>
+              <li data-i18n="afterItem2">AI word lookup + personal notebook</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Features ───────────────────────── -->
+    <section class="features" aria-labelledby="features-title">
+      <div class="section-inner">
+        <h2 id="features-title" class="section-title fade-up" data-i18n="featuresTitle">Features</h2>
+        <div class="feature-grid">
+
+          <article class="feature-card fade-up">
+            <div class="feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </div>
+            <h3 data-i18n="feature1Title">Subtitle Mask</h3>
+            <p data-i18n="feature1Desc">Drag to cover subtitles and practice pure listening. Reveal with one click to check your answer.</p>
+          </article>
+
+          <article class="feature-card fade-up">
+            <div class="feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <h3 data-i18n="feature2Title">AI Word Lookup</h3>
+            <p data-i18n="feature2Desc">Select any word in your dictation to instantly get the reading, meaning, and grammar explanation.</p>
+          </article>
+
+          <article class="feature-card fade-up">
+            <div class="feature-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <h3 data-i18n="feature3Title">Personal Notebook</h3>
+            <p data-i18n="feature3Desc">Save vocabulary and grammar points as you learn. Export your notes anytime.</p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How it works ───────────────────── -->
+    <section class="how-it-works" aria-labelledby="how-title">
+      <div class="section-inner">
+        <h2 id="how-title" class="section-title fade-up" data-i18n="howTitle">How it works</h2>
+        <div class="steps">
+          <div class="step fade-up">
+            <div class="step-num">1</div>
+            <h3 data-i18n="step1Title">Import your video</h3>
+            <p data-i18n="step1Desc">Drag any local video file into Subdict</p>
+          </div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <div class="step fade-up">
+            <div class="step-num">2</div>
+            <h3 data-i18n="step2Title">Practice listening</h3>
+            <p data-i18n="step2Desc">Cover subtitles and type what you hear</p>
+          </div>
+          <div class="step-connector" aria-hidden="true"></div>
+          <div class="step fade-up">
+            <div class="step-num">3</div>
+            <h3 data-i18n="step3Title">Look up &amp; save</h3>
+            <p data-i18n="step3Desc">Select words for AI analysis, save to notebook</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Supported Languages ────────────── -->
+    <section class="languages" aria-label="Supported languages">
+      <div class="section-inner">
+        <p class="section-title fade-up" data-i18n="langsTitle">Currently supporting Japanese and English learning</p>
+        <div class="lang-badges fade-up">
+          <span class="lang-badge" data-i18n="langJa">🇯🇵 Japanese</span>
+          <span class="lang-badge" data-i18n="langEn">🇬🇧 English</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Final CTA ──────────────────────── -->
+    <section class="final-cta" aria-label="Get started">
+      <div class="section-inner fade-up">
+        <h2 data-i18n="finalCtaTitle">Ready to level up your listening?</h2>
+        <a class="btn btn-primary btn-lg" href="/subdict/dictation-practice/" data-i18n="finalCtaBtn">Try Subdict Free →</a>
+        <p class="final-note" data-i18n="finalNote">Free forever · No signup · Your data stays on your device</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ─────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <p data-i18n="footerCopy">© 2025 Subdict · Built for language learners</p>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="/subdict/dictation-practice/" data-i18n="footerTool">Tool</a>
+        <span data-i18n="footerGuide">Guide (coming soon)</span>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    const strings = {
+      en: {
+        navCta:       "Try Free →",
+        heroHeadline: "Learn languages through the shows you love",
+        heroSub:      "Import any video, cover the subtitles, and practice dictation with AI-powered word lookup. Free, private, no account needed.",
+        heroCta:      "Start Dictation Practice →",
+        heroNote:     "No account required · Works in your browser · 100% free",
+        painTitle:    "A better way to learn",
+        beforeLabel:  "Before",
+        afterLabel:   "With Subdict",
+        beforeItem0:  "Switching between video player, dictionary, and notes",
+        beforeItem1:  "Manually covering subtitles with your hand",
+        beforeItem2:  "No way to track what you've learned",
+        afterItem0:   "Everything in one tab",
+        afterItem1:   "Smart subtitle mask, adjustable with one drag",
+        afterItem2:   "AI word lookup + personal notebook",
+        featuresTitle: "Features",
+        feature1Title: "Subtitle Mask",
+        feature1Desc:  "Drag to cover subtitles and practice pure listening. Reveal with one click to check your answer.",
+        feature2Title: "AI Word Lookup",
+        feature2Desc:  "Select any word in your dictation to instantly get the reading, meaning, and grammar explanation.",
+        feature3Title: "Personal Notebook",
+        feature3Desc:  "Save vocabulary and grammar points as you learn. Export your notes anytime.",
+        howTitle:   "How it works",
+        step1Title: "Import your video",
+        step1Desc:  "Drag any local video file into Subdict",
+        step2Title: "Practice listening",
+        step2Desc:  "Cover subtitles and type what you hear",
+        step3Title: "Look up & save",
+        step3Desc:  "Select words for AI analysis, save to notebook",
+        langsTitle: "Currently supporting Japanese and English learning",
+        langJa:     "🇯🇵 Japanese",
+        langEn:     "🇬🇧 English",
+        finalCtaTitle: "Ready to level up your listening?",
+        finalCtaBtn:   "Try Subdict Free →",
+        finalNote:     "Free forever · No signup · Your data stays on your device",
+        footerCopy:    "© 2025 Subdict · Built for language learners",
+        footerTool:    "Tool",
+        footerGuide:   "Guide (coming soon)",
+      },
+      "zh-TW": {
+        navCta:       "免費試用 →",
+        heroHeadline: "透過你喜愛的影片學習語言",
+        heroSub:      "匯入任何影片，遮住字幕，透過 AI 單字查詢練習聽寫。完全免費、私密、無需帳號。",
+        heroCta:      "開始聽寫練習 →",
+        heroNote:     "無需帳號 · 在瀏覽器中運行 · 完全免費",
+        painTitle:    "更好的學習方式",
+        beforeLabel:  "以前",
+        afterLabel:   "使用 Subdict",
+        beforeItem0:  "在影片播放器、字典和筆記之間切換",
+        beforeItem1:  "用手遮住字幕",
+        beforeItem2:  "無法追蹤學習進度",
+        afterItem0:   "一個分頁搞定一切",
+        afterItem1:   "智慧字幕遮罩，一鍵拖曳調整",
+        afterItem2:   "AI 單字查詢 + 個人筆記本",
+        featuresTitle: "功能特色",
+        feature1Title: "字幕遮罩",
+        feature1Desc:  "拖曳遮住字幕，練習純聽力。點一下即可揭曉答案。",
+        feature2Title: "AI 單字查詢",
+        feature2Desc:  "在聽寫中選取任意單字，立即獲得假名讀音、意思和文法說明。",
+        feature3Title: "個人筆記本",
+        feature3Desc:  "邊學邊儲存單字和文法重點。隨時匯出你的筆記。",
+        howTitle:   "使用方式",
+        step1Title: "匯入影片",
+        step1Desc:  "將任何本地影片拖入 Subdict",
+        step2Title: "練習聆聽",
+        step2Desc:  "遮住字幕，打出你聽到的內容",
+        step3Title: "查詢與儲存",
+        step3Desc:  "選取單字進行 AI 分析，儲存至筆記本",
+        langsTitle: "目前支援日語和英語學習",
+        langJa:     "🇯🇵 日語",
+        langEn:     "🇬🇧 英語",
+        finalCtaTitle: "準備好提升你的聽力了嗎？",
+        finalCtaBtn:   "免費試用 Subdict →",
+        finalNote:     "永久免費 · 無需註冊 · 資料儲存於你的裝置",
+        footerCopy:    "© 2025 Subdict · 為語言學習者打造",
+        footerTool:    "工具",
+        footerGuide:   "使用指南（即將推出）",
+      },
+      ja: {
+        navCta:       "無料で試す →",
+        heroHeadline: "好きなドラマで語学を学ぼう",
+        heroSub:      "動画を読み込み、字幕を隠して、AIによる単語検索でディクテーション練習。無料・プライベート・アカウント不要。",
+        heroCta:      "ディクテーション練習を始める →",
+        heroNote:     "アカウント不要 · ブラウザで動作 · 完全無料",
+        painTitle:    "よりよい学習方法",
+        beforeLabel:  "従来",
+        afterLabel:   "Subdict を使うと",
+        beforeItem0:  "動画プレーヤー・辞書・ノートを行き来する",
+        beforeItem1:  "手で字幕を隠す",
+        beforeItem2:  "学習記録をつける方法がない",
+        afterItem0:   "すべて1つのタブで完結",
+        afterItem1:   "スマート字幕マスク、ワンドラッグで調整",
+        afterItem2:   "AI単語検索 + 個人ノートブック",
+        featuresTitle: "機能",
+        feature1Title: "字幕マスク",
+        feature1Desc:  "ドラッグして字幕を隠し、純粋なリスニングを練習。クリックひとつで答え合わせ。",
+        feature2Title: "AI単語検索",
+        feature2Desc:  "ディクテーション中の任意の単語を選択すると、読み仮名・意味・文法解説を即座に表示。",
+        feature3Title: "個人ノートブック",
+        feature3Desc:  "学習しながら語彙と文法ポイントを保存。いつでもノートをエクスポート可能。",
+        howTitle:   "使い方",
+        step1Title: "動画を読み込む",
+        step1Desc:  "任意のローカル動画をSubdictにドラッグ",
+        step2Title: "リスニング練習",
+        step2Desc:  "字幕を隠して、聞こえた内容をタイプ",
+        step3Title: "調べて保存",
+        step3Desc:  "単語を選択してAI分析、ノートブックに保存",
+        langsTitle: "現在、日本語と英語の学習に対応",
+        langJa:     "🇯🇵 日本語",
+        langEn:     "🇬🇧 英語",
+        finalCtaTitle: "リスニング力を上げる準備はできましたか？",
+        finalCtaBtn:   "Subdict を無料で試す →",
+        finalNote:     "永久無料 · 登録不要 · データはあなたのデバイスに保存",
+        footerCopy:    "© 2025 Subdict · 語学学習者のために作られました",
+        footerTool:    "ツール",
+        footerGuide:   "ガイド（近日公開）",
+      },
+    };
+
+    const pageTitles = {
+      en:    "Subdict — Learn languages through the shows you love",
+      "zh-TW": "Subdict — 透過你喜愛的影片學習語言",
+      ja:    "Subdict — 好きなドラマで語学を学ぼう",
+    };
+
+    function applyLang(lang) {
+      if (!strings[lang]) lang = "en";
+      const pack = strings[lang];
+      document.documentElement.lang = lang;
+      document.title = pageTitles[lang];
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        if (pack[key] !== undefined) el.textContent = pack[key];
+      });
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        const active = btn.dataset.lang === lang;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-pressed", String(active));
+      });
+      localStorage.setItem("subdict_landing_lang", lang);
+    }
+
+    function detectLang() {
+      const saved = localStorage.getItem("subdict_landing_lang");
+      if (saved && strings[saved]) return saved;
+      const bl = (navigator.language || "en").toLowerCase();
+      if (bl.startsWith("zh")) return "zh-TW";
+      if (bl.startsWith("ja")) return "ja";
+      return "en";
+    }
+
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => applyLang(btn.dataset.lang));
+    });
+
+    applyLang(detectLang());
+
+    // Stagger delays for feature cards and steps
+    document.querySelectorAll(".feature-grid .feature-card").forEach((el, i) => {
+      el.style.transitionDelay = `${i * 0.12}s`;
+    });
+    document.querySelectorAll(".steps .step").forEach((el, i) => {
+      el.style.transitionDelay = `${i * 0.12}s`;
+    });
+
+    // Scroll fade-in
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("visible");
+          observer.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.08, rootMargin: "0px 0px -32px 0px" }
+    );
+    document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
