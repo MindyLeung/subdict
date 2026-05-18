@@ -145,9 +145,10 @@
     .hero {
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: calc(var(--nav-h) + 72px) 24px 88px;
+      padding: calc(var(--nav-h) + 72px) 0 88px;
       background:
         radial-gradient(ellipse 80% 55% at 50% -5%, rgba(13,148,136,.16) 0%, transparent 70%),
         var(--bg);
@@ -155,6 +156,8 @@
     }
     .hero-inner {
       max-width: 720px;
+      width: 100%;
+      padding: 0 24px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -176,6 +179,19 @@
       font-size: .82rem;
       color: var(--text-muted);
       opacity: .8;
+    }
+    .hero-screenshot {
+      max-width: 960px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+      width: 100%;
+    }
+    .hero-screenshot img {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.12);
+      border: 1px solid rgba(13,148,136,0.15);
+      display: block;
     }
 
     /* ── Pain vs Solution ────────────────── */
@@ -286,54 +302,106 @@
     .feature-card h3 { font-size: 1.05rem; font-weight: 600; }
     .feature-card p  { font-size: .88rem; color: var(--text-muted); line-height: 1.65; }
 
-    /* ── How it works ────────────────────── */
+    /* ── Guide Steps (How it works) ──────── */
     .how-it-works { padding: 96px 0; }
 
-    .steps {
+    .guide-steps {
       display: flex;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 80px;
     }
-    .step {
+    .guide-step {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+    }
+    .guide-step.guide-reverse { flex-direction: row-reverse; }
+
+    .guide-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 14px;
-      padding: 0 20px;
+      gap: 16px;
     }
-    .step-num {
-      width: 48px;
-      height: 48px;
+    .guide-badge {
+      width: 40px;
+      height: 40px;
       background: var(--primary);
       color: #fff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       flex-shrink: 0;
     }
-    .step h3 { font-size: 1rem; font-weight: 600; }
-    .step p  { font-size: .85rem; color: var(--text-muted); line-height: 1.6; }
-
-    .step-connector {
-      flex-shrink: 0;
-      width: 48px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary-light), var(--border));
-      margin-top: 24px;
-      position: relative;
+    .guide-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
     }
-    .step-connector::after {
+    .guide-content > p {
+      font-size: .95rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+    .detail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-top: 4px;
+    }
+    .detail-list li {
+      font-size: .85rem;
+      color: var(--text-muted);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .detail-list li::before {
       content: "";
       position: absolute;
-      right: -6px;
-      top: -4px;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-left: 7px solid var(--border);
+      left: 0;
+      top: 7px;
+      width: 6px;
+      height: 6px;
+      background: var(--primary);
+      border-radius: 50%;
+    }
+    .guide-visual { flex: 1; }
+    .guide-icon-card {
+      background: linear-gradient(140deg, var(--primary-light) 0%, rgba(240,250,249,.5) 100%);
+      border: 1px solid rgba(13,148,136,.18);
+      border-radius: var(--radius);
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      color: var(--primary);
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .guide-icon-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 35%, rgba(13,148,136,.1), transparent 65%);
+    }
+    .guide-icon-card svg {
+      width: 64px;
+      height: 64px;
+      position: relative;
+      z-index: 1;
+      opacity: .75;
+    }
+    .guide-icon-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
     }
 
     /* ── Languages ───────────────────────── */
@@ -419,16 +487,20 @@
     /* ── Responsive ──────────────────────── */
     @media (max-width: 860px) {
       .feature-grid { grid-template-columns: 1fr; }
+
+      .guide-step,
+      .guide-step.guide-reverse {
+        flex-direction: column;
+        gap: 32px;
+      }
+      .guide-visual { width: 100%; max-width: 440px; align-self: center; }
+      .guide-steps  { gap: 56px; }
     }
     @media (max-width: 700px) {
       .nav-cta { display: none; }
 
       .split { flex-direction: column; }
       .split-divider { width: 100%; height: 32px; transform: rotate(90deg); margin: -4px 0; }
-
-      .steps { flex-direction: column; align-items: center; gap: 36px; }
-      .step  { padding: 0; max-width: 320px; }
-      .step-connector { display: none; }
 
       .footer-inner { flex-direction: column; text-align: center; }
     }
@@ -458,6 +530,11 @@
         <p class="hero-sub" data-i18n="heroSub">Import any video, cover the subtitles, and practice dictation with AI-powered word lookup. Free, private, no account needed.</p>
         <a class="btn btn-primary btn-lg" href="/subdict/dictation-practice/" data-i18n="heroCta">Start Dictation Practice →</a>
         <p class="hero-note" data-i18n="heroNote">No account required · Works in your browser · 100% free</p>
+      </div>
+      <div class="hero-screenshot fade-up">
+        <img src="screenshot.png"
+             alt="Subdict interface showing subtitle mask, dictation records and AI word lookup"
+             loading="lazy" />
       </div>
     </section>
 
@@ -537,24 +614,119 @@
     <section class="how-it-works" aria-labelledby="how-title">
       <div class="section-inner">
         <h2 id="how-title" class="section-title fade-up" data-i18n="howTitle">How it works</h2>
-        <div class="steps">
-          <div class="step fade-up">
-            <div class="step-num">1</div>
-            <h3 data-i18n="step1Title">Import your video</h3>
-            <p data-i18n="step1Desc">Drag any local video file into Subdict</p>
+        <div class="guide-steps">
+
+          <!-- Step 1 -->
+          <div class="guide-step fade-up">
+            <div class="guide-content">
+              <div class="guide-badge">1</div>
+              <h3 data-i18n="step1Title">Drop your video file</h3>
+              <p data-i18n="step1Desc">Drag any local MP4, MKV or MOV file directly into the browser window. Your video never leaves your device — everything runs locally.</p>
+              <ul class="detail-list">
+                <li data-i18n="step1d0">Supports MP4, MKV, MOV, AVI</li>
+                <li data-i18n="step1d1">No upload, 100% private</li>
+                <li data-i18n="step1d2">Works with any video that has embedded subtitles</li>
+              </ul>
+            </div>
+            <div class="guide-visual">
+              <div class="guide-icon-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="step-connector" aria-hidden="true"></div>
-          <div class="step fade-up">
-            <div class="step-num">2</div>
-            <h3 data-i18n="step2Title">Practice listening</h3>
-            <p data-i18n="step2Desc">Cover subtitles and type what you hear</p>
+
+          <!-- Step 2 (reversed) -->
+          <div class="guide-step guide-reverse fade-up">
+            <div class="guide-content">
+              <div class="guide-badge">2</div>
+              <h3 data-i18n="step2Title">Adjust the subtitle mask</h3>
+              <p data-i18n="step2Desc">Drag the mask handle to cover the subtitle area. The black bar hides both the target language and translation subtitles so you practice pure listening.</p>
+              <ul class="detail-list">
+                <li data-i18n="step2d0">Drag top edge to resize</li>
+                <li data-i18n="step2d1">Press S to toggle on/off</li>
+                <li data-i18n="step2d2">Position is saved automatically</li>
+              </ul>
+            </div>
+            <div class="guide-visual">
+              <div class="guide-icon-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="step-connector" aria-hidden="true"></div>
-          <div class="step fade-up">
-            <div class="step-num">3</div>
-            <h3 data-i18n="step3Title">Look up &amp; save</h3>
-            <p data-i18n="step3Desc">Select words for AI analysis, save to notebook</p>
+
+          <!-- Step 3 -->
+          <div class="guide-step fade-up">
+            <div class="guide-content">
+              <div class="guide-badge">3</div>
+              <h3 data-i18n="step3Title">Write your dictation</h3>
+              <p data-i18n="step3Desc">Play the video, pause when you hear something, and type what you heard. Press Enter to record each line — it automatically saves with a timestamp.</p>
+              <ul class="detail-list">
+                <li data-i18n="step3d0">Auto-saves to your browser</li>
+                <li data-i18n="step3d1">Timestamped entries</li>
+                <li data-i18n="step3d2">Resume anytime, even after closing</li>
+              </ul>
+            </div>
+            <div class="guide-visual">
+              <div class="guide-icon-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </div>
+            </div>
           </div>
+
+          <!-- Step 4 (reversed) -->
+          <div class="guide-step guide-reverse fade-up">
+            <div class="guide-content">
+              <div class="guide-badge">4</div>
+              <h3 data-i18n="step4Title">Select any word to look up</h3>
+              <p data-i18n="step4Desc">Highlight any word or phrase in your dictation. Click 'Look up' to get the reading, meaning, and grammar explanation powered by AI.</p>
+              <ul class="detail-list">
+                <li data-i18n="step4d0">Reading (hiragana / IPA)</li>
+                <li data-i18n="step4d1">Grammar pattern analysis</li>
+                <li data-i18n="step4d2">One-click save to notebook</li>
+              </ul>
+            </div>
+            <div class="guide-visual">
+              <div class="guide-icon-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="guide-step fade-up">
+            <div class="guide-content">
+              <div class="guide-badge">5</div>
+              <h3 data-i18n="step5Title">Save and export your learning</h3>
+              <p data-i18n="step5Desc">Save vocabulary and grammar points to your personal notebook as you learn. Export everything as a text file to review later.</p>
+              <ul class="detail-list">
+                <li data-i18n="step5d0">Save words and grammar separately</li>
+                <li data-i18n="step5d1">Export dictation transcript (.txt)</li>
+                <li data-i18n="step5d2">Export full notebook (.txt)</li>
+              </ul>
+            </div>
+            <div class="guide-visual">
+              <div class="guide-icon-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -616,13 +788,32 @@
         feature2Desc:  "Select any word in your dictation to instantly get the reading, meaning, and grammar explanation.",
         feature3Title: "Personal Notebook",
         feature3Desc:  "Save vocabulary and grammar points as you learn. Export your notes anytime.",
-        howTitle:   "How it works",
-        step1Title: "Import your video",
-        step1Desc:  "Drag any local video file into Subdict",
-        step2Title: "Practice listening",
-        step2Desc:  "Cover subtitles and type what you hear",
-        step3Title: "Look up & save",
-        step3Desc:  "Select words for AI analysis, save to notebook",
+        howTitle: "How it works",
+        step1Title: "Drop your video file",
+        step1Desc:  "Drag any local MP4, MKV or MOV file directly into the browser window. Your video never leaves your device — everything runs locally.",
+        step1d0: "Supports MP4, MKV, MOV, AVI",
+        step1d1: "No upload, 100% private",
+        step1d2: "Works with any video that has embedded subtitles",
+        step2Title: "Adjust the subtitle mask",
+        step2Desc:  "Drag the mask handle to cover the subtitle area. The black bar hides both the target language and translation subtitles so you practice pure listening.",
+        step2d0: "Drag top edge to resize",
+        step2d1: "Press S to toggle on/off",
+        step2d2: "Position is saved automatically",
+        step3Title: "Write your dictation",
+        step3Desc:  "Play the video, pause when you hear something, and type what you heard. Press Enter to record each line — it automatically saves with a timestamp.",
+        step3d0: "Auto-saves to your browser",
+        step3d1: "Timestamped entries",
+        step3d2: "Resume anytime, even after closing",
+        step4Title: "Select any word to look up",
+        step4Desc:  "Highlight any word or phrase in your dictation. Click 'Look up' to get the reading, meaning, and grammar explanation powered by AI.",
+        step4d0: "Reading (hiragana / IPA)",
+        step4d1: "Grammar pattern analysis",
+        step4d2: "One-click save to notebook",
+        step5Title: "Save and export your learning",
+        step5Desc:  "Save vocabulary and grammar points to your personal notebook as you learn. Export everything as a text file to review later.",
+        step5d0: "Save words and grammar separately",
+        step5d1: "Export dictation transcript (.txt)",
+        step5d2: "Export full notebook (.txt)",
         langsTitle: "Currently supporting Japanese and English learning",
         langJa:     "🇯🇵 Japanese",
         langEn:     "🇬🇧 English",
@@ -655,13 +846,32 @@
         feature2Desc:  "在聽寫中選取任意單字，立即獲得假名讀音、意思和文法說明。",
         feature3Title: "個人筆記本",
         feature3Desc:  "邊學邊儲存單字和文法重點。隨時匯出你的筆記。",
-        howTitle:   "使用方式",
-        step1Title: "匯入影片",
-        step1Desc:  "將任何本地影片拖入 Subdict",
-        step2Title: "練習聆聽",
-        step2Desc:  "遮住字幕，打出你聽到的內容",
-        step3Title: "查詢與儲存",
-        step3Desc:  "選取單字進行 AI 分析，儲存至筆記本",
+        howTitle: "使用方式",
+        step1Title: "匯入你的影片檔案",
+        step1Desc:  "將任何本地 MP4、MKV 或 MOV 檔案直接拖入瀏覽器視窗。你的影片不會離開你的裝置——一切都在本地運行。",
+        step1d0: "支援 MP4、MKV、MOV、AVI",
+        step1d1: "無需上傳，100% 私密",
+        step1d2: "適用於任何含有內嵌字幕的影片",
+        step2Title: "調整字幕遮罩",
+        step2Desc:  "拖動遮罩控制桿以遮蓋字幕區域。黑色條狀遮罩同時隱藏目標語言和翻譯字幕，讓你練習純聽力。",
+        step2d0: "拖動上緣調整大小",
+        step2d1: "按 S 鍵切換開關",
+        step2d2: "位置自動儲存",
+        step3Title: "寫下你的聽寫",
+        step3Desc:  "播放影片，聽到內容時暫停，打出你聽到的。按 Enter 記錄每一行——自動儲存並附上時間戳。",
+        step3d0: "自動儲存至瀏覽器",
+        step3d1: "帶有時間戳的記錄",
+        step3d2: "隨時繼續，即使關閉後也能恢復",
+        step4Title: "選取任意單字查詢",
+        step4Desc:  "在聽寫中反白任意單字或片語，點擊「查詢」即可獲得 AI 提供的讀音、意思和文法說明。",
+        step4d0: "讀音（假名 / IPA）",
+        step4d1: "文法句型分析",
+        step4d2: "一鍵儲存至筆記本",
+        step5Title: "儲存並匯出你的學習成果",
+        step5Desc:  "邊學邊將單字和文法重點儲存至個人筆記本。將所有內容匯出為文字檔，方便日後複習。",
+        step5d0: "分別儲存單字和文法",
+        step5d1: "匯出聽寫記錄（.txt）",
+        step5d2: "匯出完整筆記本（.txt）",
         langsTitle: "目前支援日語和英語學習",
         langJa:     "🇯🇵 日語",
         langEn:     "🇬🇧 英語",
@@ -694,13 +904,32 @@
         feature2Desc:  "ディクテーション中の任意の単語を選択すると、読み仮名・意味・文法解説を即座に表示。",
         feature3Title: "個人ノートブック",
         feature3Desc:  "学習しながら語彙と文法ポイントを保存。いつでもノートをエクスポート可能。",
-        howTitle:   "使い方",
-        step1Title: "動画を読み込む",
-        step1Desc:  "任意のローカル動画をSubdictにドラッグ",
-        step2Title: "リスニング練習",
-        step2Desc:  "字幕を隠して、聞こえた内容をタイプ",
-        step3Title: "調べて保存",
-        step3Desc:  "単語を選択してAI分析、ノートブックに保存",
+        howTitle: "使い方",
+        step1Title: "動画ファイルをドロップ",
+        step1Desc:  "MP4・MKV・MOVなど、ローカルの動画ファイルをブラウザ画面に直接ドラッグします。動画がデバイスの外に出ることはなく、すべてローカルで動作します。",
+        step1d0: "MP4・MKV・MOV・AVI に対応",
+        step1d1: "アップロード不要、100%プライベート",
+        step1d2: "字幕が埋め込まれた動画ならどれでも動作",
+        step2Title: "字幕マスクを調整する",
+        step2Desc:  "マスクハンドルをドラッグして字幕エリアを隠します。黒いバーが目標言語と翻訳字幕の両方を隠し、純粋なリスニング練習ができます。",
+        step2d0: "上端をドラッグしてサイズ変更",
+        step2d1: "S キーでオン/オフ切り替え",
+        step2d2: "位置は自動保存",
+        step3Title: "ディクテーションを書く",
+        step3Desc:  "動画を再生し、聞こえたところで一時停止して、聞き取った内容をタイプします。Enterで各行を記録——タイムスタンプ付きで自動保存されます。",
+        step3d0: "ブラウザに自動保存",
+        step3d1: "タイムスタンプ付きエントリ",
+        step3d2: "閉じた後でもいつでも再開可能",
+        step4Title: "単語を選んで調べる",
+        step4Desc:  "ディクテーション中の任意の単語やフレーズをハイライト。「調べる」をクリックするとAIが読み仮名・意味・文法解説を表示します。",
+        step4d0: "読み（ひらがな / IPA）",
+        step4d1: "文法パターン分析",
+        step4d2: "ワンクリックでノートブックに保存",
+        step5Title: "学習内容を保存してエクスポート",
+        step5Desc:  "学習しながら語彙と文法ポイントを個人ノートブックに保存。後で復習するためにすべてをテキストファイルとしてエクスポートできます。",
+        step5d0: "単語と文法を別々に保存",
+        step5d1: "ディクテーション記録をエクスポート（.txt）",
+        step5d2: "ノートブック全体をエクスポート（.txt）",
         langsTitle: "現在、日本語と英語の学習に対応",
         langJa:     "🇯🇵 日本語",
         langEn:     "🇬🇧 英語",
@@ -751,11 +980,8 @@
 
     applyLang(detectLang());
 
-    // Stagger delays for feature cards and steps
+    // Stagger delays for feature cards
     document.querySelectorAll(".feature-grid .feature-card").forEach((el, i) => {
-      el.style.transitionDelay = `${i * 0.12}s`;
-    });
-    document.querySelectorAll(".steps .step").forEach((el, i) => {
       el.style.transitionDelay = `${i * 0.12}s`;
     });
 
