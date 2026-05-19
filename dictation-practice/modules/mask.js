@@ -64,5 +64,8 @@ export function createMask({ stage, mask, handle, toggle }) {
 
   applyVisibility();
 
-  return { refresh: applyVisibility };
+  return {
+    refresh: applyVisibility,
+    hide() { visible = false; applyVisibility(); },
+  };
 }

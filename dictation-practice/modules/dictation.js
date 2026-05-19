@@ -34,7 +34,7 @@ export function createDictation({
   }
 
   function saveActiveSession() {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ id: session.id }));
   }
 
   function loadRecords(sessionId) {

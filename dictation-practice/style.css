@@ -136,10 +136,37 @@ body[data-theme="dark"] {
 }
 
 .file-chip {
-  min-width: 160px;
+  min-width: 120px;
   color: var(--text2);
   font-weight: 600;
 }
+.file-chip:empty::before {
+  content: "—";
+  color: var(--text3);
+}
+
+.clear-video-btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 16px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: color 120ms, background 120ms;
+}
+.clear-video-btn:hover {
+  color: var(--danger);
+  background: rgba(185, 74, 72, 0.1);
+}
+.clear-video-btn[hidden] { display: none; }
 
 .select-wrap { padding-right: 8px; }
 

@@ -12,6 +12,7 @@ const els = {
   video: $("#video"),
   videoInput: $("#videoInput"),
   fileName: $("#fileName"),
+  clearVideoBtn: $("#clearVideoBtn"),
   playBtn: $("#playBtn"),
   backBtn: $("#backBtn"),
   forwardBtn: $("#forwardBtn"),
@@ -62,6 +63,7 @@ const player = createPlayer({
   video: els.video,
   videoInput: els.videoInput,
   fileName: els.fileName,
+  clearVideoBtn: els.clearVideoBtn,
   playBtn: els.playBtn,
   backBtn: els.backBtn,
   forwardBtn: els.forwardBtn,
@@ -73,6 +75,9 @@ const player = createPlayer({
   toastEl: els.toastEl,
   onVideoLoaded: (videoSession) => {
     dictation?.setSession(videoSession);
+  },
+  onVideoCleared: () => {
+    mask.hide();
   },
 });
 

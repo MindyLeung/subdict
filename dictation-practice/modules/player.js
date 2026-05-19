@@ -6,6 +6,7 @@ export function createPlayer({
   video,
   videoInput,
   fileName,
+  clearVideoBtn,
   playBtn,
   backBtn,
   forwardBtn,
@@ -16,6 +17,7 @@ export function createPlayer({
   dropOverlay,
   toastEl,
   onVideoLoaded,
+  onVideoCleared,
 }) {
   let speedIndex = 2;
   let toastTimer;
@@ -50,6 +52,19 @@ export function createPlayer({
     if (video.paused) { video.play(); } else { video.pause(); }
   }
 
+  function clearVideo() {
+    if (video.src?.startsWith("blob:")) URL.revokeObjectURL(video.src);
+    video.src = "";
+    video.load();
+    fileName.textContent = "";
+    if (clearVideoBtn) clearVideoBtn.hidden = true;
+    emptyVideo.hidden = false;
+    seekBar.value = "0";
+    timeReadout.textContent = "00:00 / 00:00";
+    playBtn.textContent = "▶";
+    onVideoCleared?.();
+  }
+
   function loadFile(file) {
     const url = URL.createObjectURL(file);
     if (video.src?.startsWith("blob:")) {
@@ -58,6 +73,7 @@ export function createPlayer({
     video.src = url;
     video.load();
     fileName.textContent = file.name;
+    if (clearVideoBtn) clearVideoBtn.hidden = false;
     emptyVideo.hidden = true;
     onVideoLoaded?.({
       id: createVideoId(file),
@@ -158,6 +174,13 @@ export function createPlayer({
       video.currentTime = Math.min(video.duration || video.currentTime + 5, video.currentTime + 5);
     }
   });
+
+  // On init: ensure no stale file name is shown
+  fileName.textContent = "";
+  if (clearVideoBtn) {
+    clearVideoBtn.hidden = true;
+    clearVideoBtn.addEventListener("click", clearVideo);
+  }
 
   updateControls();
 
