@@ -40,6 +40,7 @@ export function createPlayer({
 
   function showVideoError(message) {
     emptyVideo.hidden = false;
+    emptyVideo.classList.add("is-error");
     emptyVideo.innerHTML = `
       <div class="play-mark">!</div>
       <strong>${message}</strong>
@@ -58,6 +59,8 @@ export function createPlayer({
     video.load();
     fileName.textContent = "";
     if (clearVideoBtn) clearVideoBtn.hidden = true;
+    emptyVideo.classList.remove("is-error");
+    emptyVideo.innerHTML = `<div class="play-mark">▷</div><span data-i18n="emptyVideoHint">${t("emptyVideoHint")}</span>`;
     emptyVideo.hidden = false;
     seekBar.value = "0";
     timeReadout.textContent = "00:00 / 00:00";
@@ -74,6 +77,7 @@ export function createPlayer({
     video.load();
     fileName.textContent = file.name;
     if (clearVideoBtn) clearVideoBtn.hidden = false;
+    emptyVideo.classList.remove("is-error");
     emptyVideo.hidden = true;
     onVideoLoaded?.({
       id: createVideoId(file),

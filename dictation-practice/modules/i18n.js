@@ -22,8 +22,8 @@ const PACKS = {
     forwardBtnTitle: "Forward 5s",
     maskOn: "Mask On",
     maskOff: "Mask Off",
-    videoFormatError: "This browser may not support this video format.",
-    videoFormatHint: "Try converting to MP4, or use a different browser.",
+    videoFormatError: "Unable to play this video format",
+    videoFormatHint: "Try dragging in an MP4 file, or convert your video to MP4 first",
 
     // dictation
     dictationTitle: "Dictation",
@@ -85,8 +85,8 @@ const PACKS = {
     forwardBtnTitle: "快进 5 秒",
     maskOn: "遮罩开",
     maskOff: "遮罩关",
-    videoFormatError: "当前浏览器可能不支持这个视频格式",
-    videoFormatHint: "建议先转成 MP4，或换一个浏览器测试。",
+    videoFormatError: "无法播放此视频格式",
+    videoFormatHint: "请拖入 MP4 文件，或先将视频转换为 MP4 格式",
 
     // dictation
     dictationTitle: "听写记录",
