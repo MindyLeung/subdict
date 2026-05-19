@@ -404,6 +404,69 @@
       box-shadow: var(--shadow-hover);
     }
 
+    /* ── Step Screenshots + Animations ─── */
+    .step-visual { flex: 1; min-width: 0; }
+    .screenshot-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      border: 1px solid rgba(13,148,136,0.15);
+    }
+    .screenshot-container img { width: 100%; display: block; border-radius: 12px; }
+    .anim-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .anim-cursor {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .anim-cursor svg { width: 20px; height: 20px; }
+    .anim-file-chip {
+      position: absolute;
+      background: white;
+      border: 1px solid rgba(13,148,136,0.4);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      color: #0d9488;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .anim-highlight {
+      position: absolute;
+      border: 2px solid #0d9488;
+      border-radius: 6px;
+      background: rgba(13,148,136,0.08);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    .anim-word-hl {
+      position: absolute;
+      background: rgba(13,148,136,0.25);
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
     /* ── Method Section ─────────────────── */
     .method-section {
       padding: 96px 0;
@@ -567,7 +630,8 @@
         flex-direction: column;
         gap: 32px;
       }
-      .guide-visual { width: 100%; max-width: 440px; align-self: center; }
+      .guide-visual,
+      .step-visual { width: 100%; max-width: 440px; align-self: center; }
       .guide-steps  { gap: 56px; }
     }
     @media (max-width: 700px) {
@@ -759,13 +823,13 @@
                 <li data-i18n="step1d2">Works with any video that has embedded subtitles</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step1.jpg" alt="Subdict empty interface with Import Video button" loading="lazy">
+                <div class="anim-overlay" id="anim-1">
+                  <div class="anim-cursor" id="cur-1"></div>
+                  <div class="anim-highlight" id="hl-1" style="top:1%;right:0.5%;width:13%;height:6%;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -782,12 +846,13 @@
                 <li data-i18n="step2d2">Position is saved automatically</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                  <line x1="1" y1="1" x2="23" y2="23"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step2.jpg" alt="Subdict video with subtitle mask covering subtitles" loading="lazy">
+                <div class="anim-overlay" id="anim-2">
+                  <div class="anim-cursor" id="cur-2"></div>
+                  <div class="anim-highlight" id="hl-2" style="bottom:12%;left:13%;width:55%;height:3%;border-radius:2px;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -804,12 +869,13 @@
                 <li data-i18n="step3d2">Resume anytime, even after closing</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step3.jpg" alt="Subdict dictation panel with three timestamped records" loading="lazy">
+                <div class="anim-overlay" id="anim-3">
+                  <div class="anim-cursor" id="cur-3"></div>
+                  <div class="anim-highlight" id="hl-3" style="bottom:2%;left:2%;width:60%;height:6%;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -826,12 +892,14 @@
                 <li data-i18n="step4d2">One-click save to notebook</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step4.jpg" alt="Subdict word lookup panel showing reading and meaning" loading="lazy">
+                <div class="anim-overlay" id="anim-4">
+                  <div class="anim-cursor" id="cur-4"></div>
+                  <div class="anim-highlight" id="hl-4a" style="top:65%;left:5%;width:20%;height:5%;"></div>
+                  <div class="anim-highlight" id="hl-4b" style="top:13%;right:1%;width:45%;height:25%;border-color:rgba(13,148,136,0.4);"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -848,12 +916,14 @@
                 <li data-i18n="step5d2">Export full notebook (.txt)</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step5.jpg" alt="Subdict notebook tab showing a saved word entry" loading="lazy">
+                <div class="anim-overlay" id="anim-5">
+                  <div class="anim-cursor" id="cur-5"></div>
+                  <div class="anim-highlight" id="hl-5a" style="top:25%;right:1%;width:45%;height:8%;"></div>
+                  <div class="anim-highlight" id="hl-5b" style="top:9%;right:1%;width:45%;height:14%;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -870,14 +940,15 @@
                 <li data-i18n="step6d2">Repeat until it feels effortless</li>
               </ul>
             </div>
-            <div class="guide-visual">
-              <div class="guide-icon-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polyline points="17 1 21 5 17 9"/>
-                  <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-                  <polyline points="7 23 3 19 7 15"/>
-                  <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-                </svg>
+            <div class="step-visual">
+              <div class="screenshot-container">
+                <img src="images/steps/step6.jpg" alt="Subdict with four dictation records ready for shadowing" loading="lazy">
+                <div class="anim-overlay" id="anim-6">
+                  <div class="anim-highlight" id="hl-6a" style="top:53%;left:2%;width:65%;height:5%;"></div>
+                  <div class="anim-highlight" id="hl-6b" style="top:59%;left:2%;width:65%;height:5%;"></div>
+                  <div class="anim-highlight" id="hl-6c" style="top:65%;left:2%;width:65%;height:5%;"></div>
+                  <div class="anim-highlight" id="hl-6d" style="top:71%;left:2%;width:65%;height:5%;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1185,6 +1256,102 @@
     });
 
     applyLang(detectLang());
+
+    // ── Step animations ────────────────────────────────────────
+    const CURSOR_SVG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 2l16 10-7 1.5-4 7z" fill="white" stroke="#0d9488" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+    document.querySelectorAll('.anim-cursor').forEach(el => el.innerHTML = CURSOR_SVG);
+
+    function moveCursor(el, x, y, duration) {
+      el.style.transition = duration ? `left ${duration}ms ease, top ${duration}ms ease` : 'none';
+      el.style.left = x;
+      el.style.top = y;
+    }
+    function showEl(el, show) { if (el) el.style.opacity = show ? '1' : '0'; }
+
+    function anim1() {
+      const cur = document.getElementById('cur-1'), hl = document.getElementById('hl-1');
+      showEl(cur, false); showEl(hl, false);
+      moveCursor(cur, '70%', '1%');
+      setTimeout(() => showEl(cur, true), 300);
+      setTimeout(() => moveCursor(cur, '87%', '1%', 800), 500);
+      setTimeout(() => showEl(hl, true), 1400);
+      setTimeout(() => { cur.style.transform = 'scale(0.85)'; }, 1600);
+      setTimeout(() => { cur.style.transform = 'scale(1)'; showEl(hl, false); }, 1900);
+      setTimeout(() => showEl(cur, false), 2300);
+    }
+
+    function anim2() {
+      const cur = document.getElementById('cur-2'), hl = document.getElementById('hl-2');
+      showEl(cur, false); showEl(hl, false);
+      moveCursor(cur, '45%', '55%');
+      setTimeout(() => { showEl(cur, true); showEl(hl, true); }, 400);
+      setTimeout(() => { moveCursor(cur, '45%', '42%', 1000); hl.style.bottom = '22%'; hl.style.height = '16%'; }, 700);
+      setTimeout(() => { moveCursor(cur, '45%', '55%', 800); hl.style.bottom = '12%'; hl.style.height = '3%'; }, 2000);
+      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3000);
+    }
+
+    function anim3() {
+      const cur = document.getElementById('cur-3'), hl = document.getElementById('hl-3');
+      showEl(cur, false); showEl(hl, false);
+      moveCursor(cur, '30%', '90%');
+      setTimeout(() => showEl(cur, true), 300);
+      setTimeout(() => moveCursor(cur, '30%', '92%', 600), 500);
+      setTimeout(() => { showEl(hl, true); cur.style.transform = 'scale(0.85)'; }, 1200);
+      setTimeout(() => { cur.style.transform = 'scale(1)'; }, 1500);
+      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3000);
+    }
+
+    function anim4() {
+      const cur = document.getElementById('cur-4');
+      const hla = document.getElementById('hl-4a'), hlb = document.getElementById('hl-4b');
+      showEl(cur, false); showEl(hla, false); showEl(hlb, false);
+      moveCursor(cur, '5%', '62%');
+      setTimeout(() => showEl(cur, true), 300);
+      setTimeout(() => moveCursor(cur, '18%', '65%', 700), 500);
+      setTimeout(() => showEl(hla, true), 1300);
+      setTimeout(() => showEl(hlb, true), 2000);
+      setTimeout(() => { showEl(cur, false); showEl(hla, false); showEl(hlb, false); }, 3800);
+    }
+
+    function anim5() {
+      const cur = document.getElementById('cur-5');
+      const hla = document.getElementById('hl-5a'), hlb = document.getElementById('hl-5b');
+      showEl(cur, false); showEl(hla, false); showEl(hlb, false);
+      moveCursor(cur, '55%', '25%');
+      setTimeout(() => showEl(cur, true), 300);
+      setTimeout(() => moveCursor(cur, '70%', '27%', 700), 500);
+      setTimeout(() => { showEl(hla, true); cur.style.transform = 'scale(0.85)'; }, 1300);
+      setTimeout(() => { cur.style.transform = 'scale(1)'; }, 1600);
+      setTimeout(() => { showEl(hlb, true); showEl(hla, false); }, 2000);
+      setTimeout(() => { showEl(cur, false); showEl(hlb, false); }, 3500);
+    }
+
+    function anim6() {
+      const hls = ['hl-6a','hl-6b','hl-6c','hl-6d'].map(id => document.getElementById(id));
+      hls.forEach(el => showEl(el, false));
+      hls.forEach((el, i) => {
+        setTimeout(() => { hls.forEach(h => showEl(h, false)); showEl(el, true); }, 500 + i * 800);
+      });
+      setTimeout(() => hls.forEach(el => showEl(el, false)), 500 + 4 * 800);
+    }
+
+    const stepAnimations = [anim1, anim2, anim3, anim4, anim5, anim6];
+    const stepIntervals = [];
+
+    function startStepAnimations() {
+      if (stepIntervals.length) return;
+      stepAnimations.forEach((fn, i) => {
+        fn();
+        stepIntervals.push(setInterval(fn, 5000 + i * 200));
+      });
+    }
+
+    const howSection = document.querySelector('.how-it-works');
+    if (howSection) {
+      new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) startStepAnimations();
+      }, { threshold: 0.15 }).observe(howSection);
+    }
 
     // Stagger delays for feature cards and method steps
     document.querySelectorAll(".feature-grid .feature-card").forEach((el, i) => {
