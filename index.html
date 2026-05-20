@@ -1273,6 +1273,7 @@
       if (el) el.style.setProperty('--cursor-scale', pressed ? '0.85' : '1');
     }
     function showEl(el, show) { if (el) el.style.opacity = show ? '1' : '0'; }
+    function pressCursor(el, pressed) { if (el) el.style.transform = pressed ? 'scale(0.8)' : 'scale(1)'; }
 
     function anim1() {
       const cur = document.getElementById('cur-1'), hl = document.getElementById('hl-1');
@@ -1323,9 +1324,9 @@
       const cur = document.getElementById('cur-5');
       const hla = document.getElementById('hl-5a'), hlb = document.getElementById('hl-5b');
       showEl(cur, false); showEl(hla, false); showEl(hlb, false);
-      moveCursor(cur, '62%', '32%');
+      moveCursor(cur, '55%', '52%');
       setTimeout(() => showEl(cur, true), 300);
-      setTimeout(() => moveCursor(cur, '83%', '30%', 700), 500);
+      setTimeout(() => moveCursor(cur, '78%', '57%', 700), 500);
       setTimeout(() => { showEl(hla, true); pressCursor(cur, true); }, 1300);
       setTimeout(() => pressCursor(cur, false), 1600);
       setTimeout(() => { showEl(hlb, true); showEl(hla, false); }, 2000);
