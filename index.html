@@ -1331,13 +1331,14 @@
       const cur = document.getElementById('cur-5');
       const hla = document.getElementById('hl-5a'), hlb = document.getElementById('hl-5b');
       showEl(cur, false); showEl(hla, false); showEl(hlb, false);
-      moveCursor(cur, '55%', '52%');
+      moveCursor(cur, '50%', '10%');
       setTimeout(() => showEl(cur, true), 300);
-      setTimeout(() => moveCursor(cur, '78%', '57%', 700), 500);
+      setTimeout(() => moveCursor(cur, '70%', '12%', 700), 500);
       setTimeout(() => { showEl(hla, true); pressCursor(cur, true); }, 1300);
       setTimeout(() => pressCursor(cur, false), 1600);
-      setTimeout(() => { showEl(hlb, true); showEl(hla, false); }, 2000);
-      setTimeout(() => { showEl(cur, false); showEl(hlb, false); }, 3500);
+      setTimeout(() => { moveCursor(cur, '70%', '88%', 900); }, 1800);
+      setTimeout(() => { showEl(hlb, true); showEl(hla, false); }, 2800);
+      setTimeout(() => { showEl(cur, false); showEl(hlb, false); }, 4000);
     }
 
     function anim6() {
