@@ -1289,11 +1289,11 @@
     function anim2() {
       const cur = document.getElementById('cur-2'), hl = document.getElementById('hl-2');
       showEl(cur, false); showEl(hl, false);
-      moveCursor(cur, '45%', '55%');
+      moveCursor(cur, '45%', '48%');
       setTimeout(() => { showEl(cur, true); showEl(hl, true); }, 400);
-      setTimeout(() => { moveCursor(cur, '45%', '42%', 1000); hl.style.bottom = '22%'; hl.style.height = '16%'; }, 700);
-      setTimeout(() => { moveCursor(cur, '45%', '55%', 800); hl.style.bottom = '12%'; hl.style.height = '3%'; }, 2000);
-      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3000);
+      setTimeout(() => { moveCursor(cur, '45%', '30%', 1200); hl.style.bottom = '50%'; hl.style.height = '18%'; }, 700);
+      setTimeout(() => { moveCursor(cur, '45%', '48%', 900); hl.style.bottom = '35%'; hl.style.height = '2.5%'; }, 2200);
+      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3200);
     }
 
     function anim3() {
