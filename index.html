@@ -1290,11 +1290,18 @@
     function anim2() {
       const cur = document.getElementById('cur-2'), hl = document.getElementById('hl-2');
       showEl(cur, false); showEl(hl, false);
-      moveCursor(cur, '45%', '48%');
+      moveCursor(cur, '40%', '52%');
       setTimeout(() => { showEl(cur, true); showEl(hl, true); }, 400);
-      setTimeout(() => { moveCursor(cur, '45%', '30%', 1200); hl.style.bottom = '50%'; hl.style.height = '18%'; }, 700);
-      setTimeout(() => { moveCursor(cur, '45%', '48%', 900); hl.style.bottom = '35%'; hl.style.height = '2.5%'; }, 2200);
-      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3200);
+      setTimeout(() => {
+        moveCursor(cur, '40%', '32%', 1200);
+        hl.style.bottom = '58%'; hl.style.height = '22%';
+        hl.style.transition = 'bottom 1.2s ease, height 1.2s ease, opacity 0.3s';
+      }, 700);
+      setTimeout(() => {
+        moveCursor(cur, '40%', '52%', 900);
+        hl.style.bottom = '42%'; hl.style.height = '2%';
+      }, 2200);
+      setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3300);
     }
 
     function anim3() {
