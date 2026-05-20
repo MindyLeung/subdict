@@ -425,6 +425,9 @@
       position: absolute;
       width: 20px;
       height: 20px;
+      --cursor-scale: 1;
+      transform: translate(-4px, -2px) scale(var(--cursor-scale));
+      transform-origin: 4px 2px;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
@@ -828,7 +831,7 @@
                 <img src="images/steps/step1.jpg" alt="Subdict empty interface with Import Video button" loading="lazy">
                 <div class="anim-overlay" id="anim-1">
                   <div class="anim-cursor" id="cur-1"></div>
-                  <div class="anim-highlight" id="hl-1" style="top:1%;right:0.5%;width:13%;height:6%;"></div>
+                  <div class="anim-highlight" id="hl-1" style="top:0.5%;right:0.5%;width:14%;height:8%;"></div>
                 </div>
               </div>
             </div>
@@ -1266,6 +1269,9 @@
       el.style.left = x;
       el.style.top = y;
     }
+    function pressCursor(el, pressed) {
+      if (el) el.style.setProperty('--cursor-scale', pressed ? '0.85' : '1');
+    }
     function showEl(el, show) { if (el) el.style.opacity = show ? '1' : '0'; }
 
     function anim1() {
@@ -1275,8 +1281,8 @@
       setTimeout(() => showEl(cur, true), 300);
       setTimeout(() => moveCursor(cur, '87%', '1%', 800), 500);
       setTimeout(() => showEl(hl, true), 1400);
-      setTimeout(() => { cur.style.transform = 'scale(0.85)'; }, 1600);
-      setTimeout(() => { cur.style.transform = 'scale(1)'; showEl(hl, false); }, 1900);
+      setTimeout(() => pressCursor(cur, true), 1600);
+      setTimeout(() => { pressCursor(cur, false); showEl(hl, false); }, 1900);
       setTimeout(() => showEl(cur, false), 2300);
     }
 
@@ -1296,8 +1302,8 @@
       moveCursor(cur, '30%', '90%');
       setTimeout(() => showEl(cur, true), 300);
       setTimeout(() => moveCursor(cur, '30%', '92%', 600), 500);
-      setTimeout(() => { showEl(hl, true); cur.style.transform = 'scale(0.85)'; }, 1200);
-      setTimeout(() => { cur.style.transform = 'scale(1)'; }, 1500);
+      setTimeout(() => { showEl(hl, true); pressCursor(cur, true); }, 1200);
+      setTimeout(() => pressCursor(cur, false), 1500);
       setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3000);
     }
 
@@ -1317,11 +1323,11 @@
       const cur = document.getElementById('cur-5');
       const hla = document.getElementById('hl-5a'), hlb = document.getElementById('hl-5b');
       showEl(cur, false); showEl(hla, false); showEl(hlb, false);
-      moveCursor(cur, '55%', '25%');
+      moveCursor(cur, '62%', '32%');
       setTimeout(() => showEl(cur, true), 300);
-      setTimeout(() => moveCursor(cur, '70%', '27%', 700), 500);
-      setTimeout(() => { showEl(hla, true); cur.style.transform = 'scale(0.85)'; }, 1300);
-      setTimeout(() => { cur.style.transform = 'scale(1)'; }, 1600);
+      setTimeout(() => moveCursor(cur, '83%', '30%', 700), 500);
+      setTimeout(() => { showEl(hla, true); pressCursor(cur, true); }, 1300);
+      setTimeout(() => pressCursor(cur, false), 1600);
       setTimeout(() => { showEl(hlb, true); showEl(hla, false); }, 2000);
       setTimeout(() => { showEl(cur, false); showEl(hlb, false); }, 3500);
     }
