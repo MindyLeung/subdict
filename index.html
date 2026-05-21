@@ -831,7 +831,7 @@
                 <img src="images/steps/step1.jpg" alt="Subdict empty interface with Import Video button" loading="lazy">
                 <div class="anim-overlay" id="anim-1">
                   <div class="anim-cursor" id="cur-1"></div>
-                  <div class="anim-highlight" id="hl-1" style="top:1%;right:1%;width:11%;height:6%;"></div>
+                  <div class="anim-highlight" id="hl-1" style="top:1%;right:1%;width:16%;height:7%;"></div>
                 </div>
               </div>
             </div>
@@ -1278,9 +1278,9 @@
     function anim1() {
       const cur = document.getElementById('cur-1'), hl = document.getElementById('hl-1');
       showEl(cur, false); showEl(hl, false);
-      moveCursor(cur, '70%', '1%');
+      moveCursor(cur, '60%', '2%');
       setTimeout(() => showEl(cur, true), 300);
-      setTimeout(() => moveCursor(cur, '86%', '2%', 800), 500);
+      setTimeout(() => moveCursor(cur, '82%', '2%', 800), 500);
       setTimeout(() => showEl(hl, true), 1400);
       setTimeout(() => pressCursor(cur, true), 1600);
       setTimeout(() => { pressCursor(cur, false); showEl(hl, false); }, 1900);
@@ -1307,9 +1307,9 @@
     function anim3() {
       const cur = document.getElementById('cur-3'), hl = document.getElementById('hl-3');
       showEl(cur, false); showEl(hl, false);
-      moveCursor(cur, '30%', '90%');
+      moveCursor(cur, '30%', '88%');
       setTimeout(() => showEl(cur, true), 300);
-      setTimeout(() => moveCursor(cur, '30%', '92%', 600), 500);
+      setTimeout(() => moveCursor(cur, '30%', '90%', 600), 500);
       setTimeout(() => { showEl(hl, true); pressCursor(cur, true); }, 1200);
       setTimeout(() => pressCursor(cur, false), 1500);
       setTimeout(() => { showEl(cur, false); showEl(hl, false); }, 3000);
