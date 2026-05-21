@@ -1275,6 +1275,7 @@
     function showEl(el, show) { if (el) el.style.opacity = show ? '1' : '0'; }
     function pressCursor(el, pressed) { if (el) el.style.transform = pressed ? 'scale(0.8)' : 'scale(1)'; }
 
+    /* TODO: 动画待调试
     function anim1() {
       const cur = document.getElementById('cur-1'), hl = document.getElementById('hl-1');
       showEl(cur, false); showEl(hl, false);
@@ -1367,6 +1368,7 @@
         if (entries[0].isIntersecting) startStepAnimations();
       }, { threshold: 0.15 }).observe(howSection);
     }
+    */
 
     // Stagger delays for feature cards and method steps
     document.querySelectorAll(".feature-grid .feature-card").forEach((el, i) => {
