@@ -79,12 +79,13 @@ export function createDictation({
   function addRecord(text) {
     const trimmed = text.trim();
     if (!trimmed) return;
-    const t = getCurrentTime();
+    const currentTime = getCurrentTime();
+    const newId = crypto.randomUUID();
     records.push({
-      id: crypto.randomUUID(),
+      id: newId,
       text: trimmed,
-      seconds: t,
-      timestamp: formatTime(t),
+      seconds: currentTime,
+      timestamp: formatTime(currentTime),
       videoId: session.id,
       videoName: session.name,
       createdAt: Date.now(),
@@ -92,6 +93,7 @@ export function createDictation({
     records = sortBySeconds(records);
     persist();
     render();
+    recordsList.querySelector(`[data-id="${newId}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
   form.addEventListener("submit", (event) => {

@@ -15,6 +15,8 @@ export function createNotebook({
   getSource,
 }) {
   let notes = loadNotes();
+  let activeFilter = "all";
+  let filterBar = null;
 
   function loadNotes() {
     try {
@@ -36,20 +38,49 @@ export function createNotebook({
     lookupView.classList.toggle("active", !isNotebook);
   }
 
+  function buildFilterBar() {
+    filterBar = document.createElement("div");
+    filterBar.className = "tabs filter-tabs";
+    filterBar.hidden = true;
+    notebookView.insertBefore(filterBar, notebookList);
+    filterBar.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-filter]");
+      if (!btn) return;
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+  }
+
   function render() {
+    const jaCount = notes.filter((n) => n.language === "ja").length;
+    const enCount = notes.filter((n) => n.language === "en").length;
+    const hasMultipleLangs = jaCount > 0 && enCount > 0;
+
     noteCount.textContent = `(${notes.length})`;
-    if (!notes.length) {
+
+    if (!hasMultipleLangs) activeFilter = "all";
+    filterBar.hidden = !hasMultipleLangs;
+    if (hasMultipleLangs) {
+      filterBar.innerHTML = `
+        <button class="tab${activeFilter === "all" ? " active" : ""}" data-filter="all">All (${notes.length})</button>
+        <button class="tab${activeFilter === "ja" ? " active" : ""}" data-filter="ja">日本語 (${jaCount})</button>
+        <button class="tab${activeFilter === "en" ? " active" : ""}" data-filter="en">English (${enCount})</button>
+      `;
+    }
+
+    const filtered = activeFilter === "all" ? notes : notes.filter((n) => n.language === activeFilter);
+
+    if (!filtered.length) {
       notebookList.innerHTML = `<div class="empty-state">${t("notebookEmpty")}</div>`;
       return;
     }
 
-    notebookList.innerHTML = notes
-      .map(
-        (note) => {
-          const displayWord = note.word.endsWith("_grammar")
-            ? note.word.slice(0, -8)
-            : note.word;
-          return `
+    notebookList.innerHTML = filtered
+      .map((note) => {
+        const displayWord = note.word.endsWith("_grammar")
+          ? note.word.slice(0, -8)
+          : note.word;
+        return `
           <article class="note-card" data-id="${note.id}">
             <header>
               <h3 class="note-word">${escapeHtml(displayWord)}</h3>
@@ -59,8 +90,7 @@ export function createNotebook({
             <p class="note-meaning">${escapeHtml(getNoteMeaning(note))}</p>
           </article>
         `;
-        },
-      )
+      })
       .join("");
   }
 
@@ -128,6 +158,7 @@ export function createNotebook({
   notebookTab.addEventListener("click", () => setTab("notebook"));
   openNotebookButton.addEventListener("click", () => setTab("notebook"));
 
+  buildFilterBar();
   render();
 
   return {
